@@ -18,8 +18,8 @@
 :root {
   --black:   #000000;
   --white:   #ffffff;
-  --blue:    #0047FF;
-  --blue-dim:#0031BB;
+  --blue:    #00B4FF;
+  --blue-dim:#0090CC;
   --grey:    #111111;
   --grey2:   #1a1a1a;
   --grey3:   #888888;
@@ -27,6 +27,41 @@
   --font-body:    'Barlow', sans-serif;
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* ─── LIGHT MODE ─────────────────────────────────── */
+body.light {
+  --black:  #f0f0f0;
+  --white:  #0a0a0a;
+  --grey:   #e2e2e2;
+  --grey2:  #d4d4d4;
+  --grey3:  #555555;
+}
+body.light nav.scrolled { background: rgba(240,240,240,0.88); }
+body.light .work-overlay { background: rgba(240,240,240,0.92); }
+body.light .work-overlay .work-title { color: var(--white); }
+body.light ::-webkit-scrollbar-track { background: var(--black); }
+body.light .hero-number { -webkit-text-stroke-color: rgba(0,180,255,0.18); }
+body.light .about-image-placeholder { color: rgba(0,0,0,0.06); }
+body.light .form-group input,
+body.light .form-group textarea { color: var(--white); }
+body.light footer { border-top-color: rgba(0,0,0,0.1); }
+body.light .footer-copy { color: rgba(0,0,0,0.35); }
+body.light .footer-logo { color: rgba(0,0,0,0.15); }
+body.light .section-header { border-bottom-color: rgba(0,0,0,0.1); }
+body.light .section-line { background: rgba(0,0,0,0.08); }
+body.light .marquee-item { color: rgba(0,0,0,0.3); }
+body.light .marquee-wrap { border-color: rgba(0,0,0,0.08); }
+body.light .hero-bottom { border-top-color: rgba(0,0,0,0.1); }
+body.light .hero-scanlines { background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px); }
+body.light .social-link { border-bottom-color: rgba(0,0,0,0.08); }
+body.light .about-stats { background: rgba(0,0,0,0.08); border-color: rgba(0,0,0,0.08); }
+body.light .stat-item { background: var(--grey); }
+body.light .skill-tag { border-color: rgba(0,0,0,0.15); }
+body.light #cursor-ring { border-color: rgba(0,180,255,0.5); }
+body.light .contact-email-link { border-bottom-color: rgba(0,0,0,0.1); }
+body.light .hero-scroll-hint { color: rgba(0,0,0,0.25); }
+body.light .scroll-line { background: rgba(0,0,0,0.15); }
+body.light .work-placeholder::before { background-image: linear-gradient(rgba(0,180,255,0.08) 1px,transparent 1px),linear-gradient(90deg,rgba(0,180,255,0.08) 1px,transparent 1px); }
 
 html { scroll-behavior: smooth; overflow-x: hidden; }
 
@@ -43,32 +78,43 @@ body {
 #cursor {
   position: fixed;
   top: 0; left: 0;
-  width: 12px; height: 12px;
-  background: var(--blue);
-  border-radius: 50%;
+  width: 0; height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 13px solid var(--blue);
   pointer-events: none;
   z-index: 9999;
-  transform: translate(-50%, -50%);
-  transition: width 0.2s var(--ease-out-expo),
-              height 0.2s var(--ease-out-expo),
-              background 0.2s ease,
-              border-radius 0.2s ease;
-  mix-blend-mode: normal;
+  transform: translate(-50%, -50%) rotate(0deg);
+  animation: cursor-spin 2s linear infinite;
+}
+body.hovering #cursor {
+  border-left-width: 5px;
+  border-right-width: 5px;
+  border-bottom-width: 9px;
+  border-bottom-color: var(--white);
+  animation: cursor-spin 0.5s linear infinite;
+}
+body.clicking #cursor {
+  border-bottom-color: var(--blue);
+  animation: cursor-spin 0.15s linear infinite;
+}
+@keyframes cursor-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
 }
 #cursor-ring {
   position: fixed;
   top: 0; left: 0;
-  width: 40px; height: 40px;
-  border: 1px solid rgba(0,71,255,0.5);
+  width: 36px; height: 36px;
+  border: 1px solid rgba(0,180,255,0.4);
   border-radius: 50%;
   pointer-events: none;
   z-index: 9998;
   transform: translate(-50%, -50%);
-  transition: transform 0.12s ease, width 0.3s var(--ease-out-expo), height 0.3s var(--ease-out-expo);
+  transition: width 0.3s var(--ease-out-expo), height 0.3s var(--ease-out-expo), border-color 0.3s ease;
 }
-body.hovering #cursor { width: 6px; height: 6px; background: var(--white); }
-body.hovering #cursor-ring { width: 60px; height: 60px; border-color: var(--blue); }
-body.clicking #cursor { width: 16px; height: 16px; border-radius: 2px; }
+body.hovering #cursor-ring { width: 56px; height: 56px; border-color: rgba(0,180,255,0.8); }
+body.clicking #cursor-ring { width: 26px; height: 26px; }
 
 /* ─── CUSTOM SCROLLBAR ───────────────────────────── */
 ::-webkit-scrollbar { width: 3px; }
@@ -95,35 +141,49 @@ body::before {
   100% { transform: translate(1px, 1px); }
 }
 
-/* ─── LANGUAGE TOGGLE ────────────────────────────── */
-#lang-toggle {
-  position: fixed;
-  top: 28px; right: 32px;
-  z-index: 1000;
+/* ─── NAV CONTROLS (lang + theme — inside nav) ───── */
+.nav-controls {
   display: flex;
-  gap: 0;
+  align-items: center;
+  gap: 8px;
+  margin-left: 32px;
 }
-#lang-toggle button {
+.nav-controls button {
   background: transparent;
-  border: 1px solid var(--grey3);
-  color: var(--grey3);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.4);
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 11px;
-  letter-spacing: 0.15em;
-  padding: 6px 12px;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  padding: 5px 11px;
   cursor: none;
   transition: all 0.2s ease;
+  line-height: 1;
 }
-#lang-toggle button:first-child { border-right: none; }
-#lang-toggle button.active {
+.nav-controls button.active {
   background: var(--blue);
   border-color: var(--blue);
-  color: var(--white);
+  color: var(--black);
 }
-#lang-toggle button:hover:not(.active) {
+.nav-controls button:hover:not(.active) {
   color: var(--white);
-  border-color: var(--white);
+  border-color: rgba(255,255,255,0.4);
+}
+.nav-controls .sep {
+  width: 1px; height: 16px;
+  background: rgba(255,255,255,0.12);
+}
+/* theme toggle icon button */
+#theme-btn {
+  width: 28px; height: 28px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+  font-size: 13px;
+  letter-spacing: 0;
 }
 
 /* ─── NAV ────────────────────────────────────────── */
@@ -206,8 +266,8 @@ section { position: relative; overflow: hidden; }
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(0,71,255,0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,71,255,0.05) 1px, transparent 1px);
+    linear-gradient(rgba(0,180,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,180,255,0.05) 1px, transparent 1px);
   background-size: 80px 80px;
   mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 0%, transparent 100%);
 }
@@ -236,7 +296,7 @@ section { position: relative; overflow: hidden; }
   font-style: italic;
   font-size: clamp(200px, 30vw, 420px);
   color: transparent;
-  -webkit-text-stroke: 1px rgba(0,71,255,0.12);
+  -webkit-text-stroke: 1px rgba(0,180,255,0.12);
   line-height: 1;
   user-select: none;
   pointer-events: none;
@@ -517,7 +577,7 @@ section { position: relative; overflow: hidden; }
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(0,71,255,0.15), transparent 50%, rgba(0,71,255,0.05));
+  background: linear-gradient(135deg, rgba(0,180,255,0.15), transparent 50%, rgba(0,180,255,0.05));
 }
 .about-image-placeholder {
   width: 100%;
@@ -677,7 +737,7 @@ section { position: relative; overflow: hidden; }
   font-family: var(--font-display);
   font-weight: 900;
   font-size: clamp(40px, 6vw, 80px);
-  color: rgba(0,71,255,0.08);
+  color: rgba(0,180,255,0.08);
   letter-spacing: -0.05em;
   text-transform: uppercase;
   user-select: none;
@@ -689,8 +749,8 @@ section { position: relative; overflow: hidden; }
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(0,71,255,0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,71,255,0.06) 1px, transparent 1px);
+    linear-gradient(rgba(0,180,255,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,180,255,0.06) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
@@ -735,7 +795,7 @@ section { position: relative; overflow: hidden; }
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--blue);
-  border: 1px solid rgba(0,71,255,0.4);
+  border: 1px solid rgba(0,180,255,0.4);
   padding: 4px 10px;
 }
 
@@ -771,8 +831,8 @@ section { position: relative; overflow: hidden; }
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(rgba(0,71,255,0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,71,255,0.08) 1px, transparent 1px);
+    linear-gradient(rgba(0,180,255,0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,180,255,0.08) 1px, transparent 1px);
   background-size: 60px 60px;
 }
 
@@ -838,7 +898,7 @@ section { position: relative; overflow: hidden; }
   font-weight: 700;
   font-size: 10px;
   letter-spacing: 0.15em;
-  color: rgba(0,71,255,0.5);
+  color: rgba(0,180,255,0.5);
 }
 .showreel-hud-right {
   position: absolute;
@@ -847,7 +907,7 @@ section { position: relative; overflow: hidden; }
   font-weight: 700;
   font-size: 10px;
   letter-spacing: 0.15em;
-  color: rgba(0,71,255,0.5);
+  color: rgba(0,180,255,0.5);
 }
 
 /* ─── CONTACT ─────────────────────────────────────── */
@@ -974,7 +1034,7 @@ section { position: relative; overflow: hidden; }
 .form-group input:focus,
 .form-group textarea:focus {
   border-bottom-color: var(--blue);
-  background: rgba(0,71,255,0.04);
+  background: rgba(0,180,255,0.04);
 }
 .form-group label {
   position: absolute;
@@ -1093,7 +1153,8 @@ footer {
   #about, #portfolio, #showreel, #contact { padding: 80px 24px; }
   footer { padding: 24px; flex-direction: column; gap: 12px; text-align: center; }
   .about-stats { grid-template-columns: 1fr 1fr; }
-  #lang-toggle { top: 20px; right: 24px; }
+  #lang-toggle { display: none; }
+  .nav-controls { margin-left: 12px; gap: 5px; }
   .hero-bottom { flex-direction: column; align-items: flex-start; gap: 32px; }
   .hero-cta { align-items: flex-start; }
   .work-item:nth-child(n) { grid-column: span 12 !important; }
@@ -1119,21 +1180,22 @@ body.lang-es [data-lang-inline="es"] { display: inline; }
 <div id="cursor"></div>
 <div id="cursor-ring"></div>
 
-<!-- Language toggle -->
-<div id="lang-toggle">
-  <button class="active" onclick="setLang('en')">EN</button>
-  <button onclick="setLang('es')">ES</button>
-</div>
 
 <!-- NAV -->
 <nav id="nav">
   <a href="#hero" class="nav-logo">LION<span>LION</span>LION</a>
   <ul class="nav-links">
-    <li><a href="#about" data-nav="about"><span data-lang-inline="en">About</span><span data-lang-inline="es">Sobre mí</span></a></li>
-    <li><a href="#portfolio" data-nav="portfolio"><span data-lang-inline="en">Works</span><span data-lang-inline="es">Obras</span></a></li>
-    <li><a href="#showreel"><span data-lang-inline="en">Showreel</span><span data-lang-inline="es">Showreel</span></a></li>
+    <li><a href="#about"><span data-lang-inline="en">About</span><span data-lang-inline="es">Sobre mí</span></a></li>
+    <li><a href="#portfolio"><span data-lang-inline="en">Works</span><span data-lang-inline="es">Obras</span></a></li>
+    <li><a href="#showreel">Showreel</a></li>
     <li><a href="#contact"><span data-lang-inline="en">Contact</span><span data-lang-inline="es">Contacto</span></a></li>
   </ul>
+  <div class="nav-controls">
+    <button id="lang-en" class="active" onclick="setLang('en')">EN</button>
+    <button id="lang-es" onclick="setLang('es')">ES</button>
+    <div class="sep"></div>
+    <button id="theme-btn" onclick="toggleTheme()" title="Toggle light/dark">☀</button>
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -1372,7 +1434,7 @@ body.lang-es [data-lang-inline="es"] { display: inline; }
 
     <div class="showreel-placeholder">
       <div class="play-btn">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="rgba(0,71,255,0.8)">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="rgba(0,180,255,0.8)">
           <polygon points="5,3 19,12 5,21"/>
         </svg>
       </div>
@@ -1400,8 +1462,8 @@ body.lang-es [data-lang-inline="es"] { display: inline; }
       <p class="contact-text" data-lang="es">Disponible para encargos, colaboraciones y proyectos freelance.
       Trabajo en publicidad, música, moda y dirección de arte personal.</p>
 
-      <a href="mailto:hello@lionlionlion.com" class="contact-email-link">
-        hello@lionlionlion.com →
+      <a href="/cdn-cgi/l/email-protection#acc4c9c0c0c3ecc0c5c3c2c0c5c3c2c0c5c3c282cfc3c1" class="contact-email-link">
+        <span class="__cf_email__" data-cfemail="f199949d9d9eb19d989e9f9d989e9f9d989e9fdf929e9c">[email&#160;protected]</span> →
       </a>
 
       <div class="social-links">
@@ -1455,7 +1517,7 @@ body.lang-es [data-lang-inline="es"] { display: inline; }
 </footer>
 
 <!-- ─── SCRIPTS ──────────────────────────────────── -->
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* === CURSOR === */
 const cursor = document.getElementById('cursor');
 const ring = document.getElementById('cursor-ring');
@@ -1493,9 +1555,14 @@ window.addEventListener('scroll', () => {
 function setLang(lang) {
   document.body.classList.remove('lang-en', 'lang-es');
   document.body.classList.add('lang-' + lang);
-  document.querySelectorAll('#lang-toggle button').forEach((btn, i) => {
-    btn.classList.toggle('active', (i === 0 && lang === 'en') || (i === 1 && lang === 'es'));
-  });
+  document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+  document.getElementById('lang-es').classList.toggle('active', lang === 'es');
+}
+
+/* === THEME TOGGLE === */
+function toggleTheme() {
+  const isLight = document.body.classList.toggle('light');
+  document.getElementById('theme-btn').textContent = isLight ? '☾' : '☀';
 }
 
 /* === SCROLL REVEAL === */
@@ -1535,7 +1602,7 @@ setInterval(() => {
   const items = document.querySelectorAll('.work-placeholder-label');
   const pick = items[Math.floor(Math.random() * items.length)];
   if (pick) {
-    pick.style.color = 'rgba(0,71,255,0.25)';
+    pick.style.color = 'rgba(0,180,255,0.25)';
     setTimeout(() => pick.style.color = '', 100);
   }
 }, 2000);
@@ -1544,11 +1611,3 @@ setInterval(() => {
 const hud = document.querySelector('.showreel-hud');
 function updateTimecode() {
   const n = new Date();
-  const pad = v => String(v).padStart(2,'0');
-  hud.textContent = `REC ● ${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}:${pad(Math.floor(n.getMilliseconds()/10))}`;
-}
-setInterval(updateTimecode, 40);
-</script>
-
-</body>
-</html>
