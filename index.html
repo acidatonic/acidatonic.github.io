@@ -75,28 +75,35 @@ body {
 }
 
 /* ─── CUSTOM CURSOR ──────────────────────────────── */
+/* #cursor = positioner (moved by JS), #cursor-tri = the spinning triangle */
 #cursor {
   position: fixed;
+  top: 0; left: 0;
+  width: 0; height: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+#cursor-tri {
+  position: absolute;
   top: 0; left: 0;
   width: 0; height: 0;
   border-left: 7px solid transparent;
   border-right: 7px solid transparent;
   border-bottom: 13px solid var(--blue);
-  pointer-events: none;
-  z-index: 9999;
   transform: translate(-50%, -50%) rotate(0deg);
   animation: cursor-spin 2s linear infinite;
+  transition: border-bottom-color 0.15s ease;
 }
-body.hovering #cursor {
+body.hovering #cursor-tri {
   border-left-width: 5px;
   border-right-width: 5px;
   border-bottom-width: 9px;
   border-bottom-color: var(--white);
-  animation: cursor-spin 0.5s linear infinite;
+  animation: cursor-spin 0.45s linear infinite;
 }
-body.clicking #cursor {
+body.clicking #cursor-tri {
   border-bottom-color: var(--blue);
-  animation: cursor-spin 0.15s linear infinite;
+  animation: cursor-spin 0.12s linear infinite;
 }
 @keyframes cursor-spin {
   from { transform: translate(-50%, -50%) rotate(0deg); }
@@ -1177,7 +1184,7 @@ body.lang-es [data-lang-inline="es"] { display: inline; }
 <body class="lang-en">
 
 <!-- Cursor -->
-<div id="cursor"></div>
+<div id="cursor"><div id="cursor-tri"></div></div>
 <div id="cursor-ring"></div>
 
 
