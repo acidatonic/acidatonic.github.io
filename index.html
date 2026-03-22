@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Miguel Asensio Mayayo — 3D Artist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Syne:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #f5f4f1;
+      --surface:  #eceae5;
+      --ink:      #1a1916;
+      --ink-muted:#7a7870;
+      --accent:   #2a2825;
+      --line:     #d4d1ca;
+      --serif:    'Cormorant Garamond', Georgia, serif;
+      --sans:     'Syne', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.4rem 3rem;
+      background: rgba(245,244,241,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+      animation: fadeDown .8s ease both;
+    }
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 1.25rem;
+      font-weight: 300;
+      letter-spacing: .05em;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2.2rem; list-style: none; }
+    .nav-links a {
+      font-size: .75rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding-top: 5rem;
+      overflow: hidden;
+    }
+    .hero-text {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 6rem 4rem 6rem 3rem;
+      animation: fadeUp .9s .2s ease both;
+    }
+    .hero-label {
+      font-size: .68rem;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 1.8rem;
+    }
+    .hero-name {
+      font-family: var(--serif);
+      font-size: clamp(3rem, 5vw, 5rem);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -.01em;
+      margin-bottom: 1.2rem;
+    }
+    .hero-name em {
+      font-style: italic;
+      color: var(--ink-muted);
+    }
+    .hero-tagline {
+      font-size: .9rem;
+      color: var(--ink-muted);
+      max-width: 360px;
+      line-height: 1.8;
+      margin-bottom: 2.8rem;
+    }
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: .7rem;
+      font-size: .72rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 1px solid var(--ink);
+      padding-bottom: .2rem;
+      width: fit-content;
+      transition: gap .25s, color .2s;
+    }
+    .hero-cta:hover { gap: 1.2rem; color: var(--ink-muted); }
+
+    .hero-visual {
+      position: relative;
+      overflow: hidden;
+      background: var(--surface);
+      animation: fadeIn 1.1s .4s ease both;
+    }
+    .hero-visual::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, transparent 60%, rgba(26,25,22,.06) 100%);
+    }
+    .hero-placeholder {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 1rem;
+      color: var(--ink-muted);
+    }
+    .hero-placeholder svg { opacity: .3; }
+    .hero-placeholder p { font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; opacity: .5; }
+    /* If user adds a real image */
+    .hero-visual img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    /* ── SECTIONS SHARED ── */
+    section { padding: 6rem 3rem; }
+    .section-label {
+      font-size: .68rem;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 3.5rem;
+      display: flex; align-items: center; gap: 1.2rem;
+    }
+    .section-label::after {
+      content: ''; flex: 1; height: 1px; background: var(--line);
+    }
+
+    /* ── ABOUT ── */
+    #about {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      border-top: 1px solid var(--line);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .about-bio {
+      font-family: var(--serif);
+      font-size: 1.55rem;
+      font-weight: 300;
+      line-height: 1.55;
+      color: var(--ink);
+    }
+    .about-bio em { font-style: italic; color: var(--ink-muted); }
+    .about-detail { display: flex; flex-direction: column; gap: 2rem; }
+    .about-item {}
+    .about-item-label {
+      font-size: .66rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: .5rem;
+    }
+    .about-item-value {
+      font-size: .88rem;
+      color: var(--ink);
+      line-height: 1.7;
+    }
+
+    /* ── SKILLS CHIPS ── */
+    .skills-chips {
+      display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .6rem;
+    }
+    .chip {
+      font-size: .68rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      border: 1px solid var(--line);
+      padding: .3rem .75rem;
+      border-radius: 2px;
+      color: var(--ink-muted);
+      background: transparent;
+      transition: background .2s, color .2s;
+    }
+    .chip:hover { background: var(--ink); color: var(--bg); }
+
+    /* ── PORTFOLIO GRID ── */
+    #portfolio { border-top: 1px solid var(--line); max-width: 1200px; margin: 0 auto; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1.2rem;
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      background: var(--surface);
+      cursor: pointer;
+    }
+    .card:nth-child(1) { grid-column: span 8; }
+    .card:nth-child(2) { grid-column: span 4; }
+    .card:nth-child(3) { grid-column: span 4; }
+    .card:nth-child(4) { grid-column: span 8; }
+    .card:nth-child(5) { grid-column: span 6; }
+    .card:nth-child(6) { grid-column: span 6; }
+
+    .card-inner {
+      aspect-ratio: 16/10;
+      position: relative;
+      overflow: hidden;
+      background: var(--surface);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card:nth-child(1) .card-inner,
+    .card:nth-child(4) .card-inner { aspect-ratio: 16/9; }
+    .card:nth-child(2) .card-inner,
+    .card:nth-child(3) .card-inner { aspect-ratio: 3/4; }
+
+    .card-inner img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s ease; }
+    .card:hover .card-inner img { transform: scale(1.04); }
+
+    /* Placeholder inside card */
+    .card-ph {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: .6rem; color: var(--ink-muted);
+    }
+    .card-ph svg { opacity: .2; }
+    .card-ph span { font-size: .6rem; letter-spacing: .15em; text-transform: uppercase; opacity: .4; }
+
+    .card-info {
+      padding: .9rem 0 .3rem;
+      display: flex; justify-content: space-between; align-items: flex-start;
+    }
+    .card-title {
+      font-size: .82rem;
+      letter-spacing: .04em;
+      color: var(--ink);
+    }
+    .card-tag {
+      font-size: .62rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+    }
+
+    /* Overlay on hover */
+    .card-overlay {
+      position: absolute; inset: 0;
+      background: rgba(26,25,22,.0);
+      transition: background .35s;
+      display: flex; align-items: flex-end;
+      padding: 1.2rem;
+    }
+    .card:hover .card-overlay { background: rgba(26,25,22,.12); }
+
+    /* ── CONTACT ── */
+    #contact {
+      border-top: 1px solid var(--line);
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 5rem;
+      align-items: start;
+    }
+    .contact-heading {
+      font-family: var(--serif);
+      font-size: clamp(2.2rem, 3.5vw, 3.5rem);
+      font-weight: 300;
+      line-height: 1.15;
+    }
+    .contact-heading em { font-style: italic; color: var(--ink-muted); }
+    .contact-links { display: flex; flex-direction: column; gap: 1rem; margin-top: .5rem; }
+    .contact-link {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--line);
+      text-decoration: none;
+      color: var(--ink);
+      font-size: .82rem;
+      letter-spacing: .06em;
+      transition: padding-left .25s;
+    }
+    .contact-link:hover { padding-left: .6rem; }
+    .contact-link-type {
+      font-size: .62rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+    }
+    .arrow { font-size: .9rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 1.8rem 3rem;
+      border-top: 1px solid var(--line);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    footer p { font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-muted); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeDown { from { opacity:0; transform: translateY(-12px); } to { opacity:1; transform: none; } }
+    @keyframes fadeUp   { from { opacity:0; transform: translateY(20px);  } to { opacity:1; transform: none; } }
+    @keyframes fadeIn   { from { opacity:0; }                               to { opacity:1; } }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 1.2rem 1.5rem; }
+      #hero { grid-template-columns: 1fr; }
+      .hero-visual { min-height: 50vw; }
+      #about { grid-template-columns: 1fr; gap: 2.5rem; }
+      .card:nth-child(n) { grid-column: span 12; }
+      #contact { grid-template-columns: 1fr; gap: 2.5rem; }
+      .hero-text { padding: 5rem 1.5rem 3rem; }
+      section { padding: 4rem 1.5rem; }
+      #about, #portfolio, #contact { padding: 4rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-logo" href="#">Miguel Asensio <em>Mayayo</em></a>
+    <ul class="nav-links">
+      <li><a href="#about">Sobre mí</a></li>
+      <li><a href="#portfolio">Portfolio</a></li>
+      <li><a href="#contact">Contacto</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-text">
+      <p class="hero-label">3D Artist · Entornos & Hard Surface</p>
+      <h1 class="hero-name">Miguel<br>Asensio<br><em>Mayayo</em></h1>
+      <p class="hero-tagline">
+        Modelador 3D especializado en entornos, props y hard surface. Construyo mundos y objetos con atención al detalle, desde el concepto hasta el render final.
+      </p>
+      <a href="#portfolio" class="hero-cta">
+        Ver portfolio <span>→</span>
+      </a>
+    </div>
+    <div class="hero-visual">
+      <!--
+        Sustituye este bloque por una imagen real:
+        <img src="renders/hero.jpg" alt="Render principal">
+      -->
+      <div class="hero-placeholder">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="8" y="20" width="48" height="32" rx="2" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M20 20V16a4 4 0 0 1 4-4h16a4 4 0 0 1 4 4v4" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="32" cy="36" r="8" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M28 36l3 3 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p>Añade tu imagen principal aquí</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="reveal">
+    <div class="section-label">Sobre mí</div>
+    <div class="about-bio">
+      Artista 3D con pasión por los <em>entornos detallados</em> y el modelado hard surface. Trabajo con precisión técnica y sensibilidad artística para crear piezas que cuentan historias.
+    </div>
+    <div class="about-detail">
+      <div class="about-item">
+        <p class="about-item-label">Especialización</p>
+        <p class="about-item-value">Entornos / Props · Hard Surface · Mecánico</p>
+      </div>
+      <div class="about-item">
+        <p class="about-item-label">Software</p>
+        <div class="skills-chips">
+          <!-- Modifica estos chips con tus programas reales -->
+          <span class="chip">Blender</span>
+          <span class="chip">ZBrush</span>
+          <span class="chip">Substance Painter</span>
+          <span class="chip">Maya</span>
+          <span class="chip">Marmoset</span>
+          <span class="chip">Unreal Engine</span>
+        </div>
+      </div>
+      <div class="about-item">
+        <p class="about-item-label">Disponibilidad</p>
+        <p class="about-item-value">Abierto a proyectos freelance y colaboraciones</p>
+      </div>
+      <div class="about-item">
+        <p class="about-item-label">Ubicación</p>
+        <p class="about-item-value">España</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section id="portfolio" class="reveal">
+    <div class="section-label">Portfolio</div>
+    <div class="grid">
+
+      <!-- Proyecto 1 — grande -->
+      <div class="card">
+        <div class="card-inner">
+          <!--<img src="renders/proyecto1.jpg" alt="Proyecto 1">-->
+          <div class="card-ph">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect x="4" y="4" width="32" height="32" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M4 28l9-9 7 7 5-5 11 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="13" cy="14" r="3" stroke="currentColor" stroke-width="1.2"/></svg>
+            <span>Render / imagen del proyecto</span>
+          </div>
+          <div class="card-overlay"></div>
+        </div>
+        <div class="card-info">
+          <span class="card-title">Título del proyecto</span>
+          <span class="card-tag">Entorno</span>
+        </div>
+      </div>
+
+      <!-- Proyecto 2 — vertical -->
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-ph">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect x="4" y="4" width="32" height="32" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M4 28l9-9 7 7 5-5 11 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="13" cy="14" r="3" stroke="currentColor" stroke-width="1.2"/></svg>
+            <span>Render / imagen del proyecto</span>
+          </div>
+          <div class="card-overlay"></div>
+        </div>
+        <div class="card-info">
+          <span class="card-title">Título del proyecto</span>
+          <span class="card-tag">Hard Surface</span>
+        </div>
+      </div>
+
+      <!-- Proyecto 3 — vertical -->
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-ph">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect x="4" y="4" width="32" height="32" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M4 28l9-9 7 7 5-5 11 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="13" cy="14" r="3" stroke="currentColor" stroke-width="1.2"/></svg>
+            <span>Render / imagen del proyecto</span>
+          </div>
+          <div class="card-overlay"></div>
+        </div>
+        <div class="card-info">
+          <span class="card-title">Título del proyecto</span>
+          <span class="card-tag">Prop</span>
+        </div>
+      </div>
+
+      <!-- Proyecto 4 — grande -->
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-ph">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect x="4" y="4" width="32" height="32" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M4 28l9-9 7 7 5-5 11 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="13" cy="14" r="3" stroke="currentColor" stroke-width="1.2"/></svg>
+            <span>Render / imagen del proyecto</span>
+          </div>
+          <div class="card-overlay"></div>
+        </div>
+        <div class="card-info">
+          <span class="card-title">Título del proyecto</span>
+          <span class="card-tag">Entorno</span>
+        </div>
+      </div>
+
+      <!-- Proyecto 5 -->
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-ph">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect x="4" y="4" width="32" height="32" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M4 28l9-9 7 7 5-5 11 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="13" cy="14" r="3" stroke="currentColor" stroke-width="1.2"/></svg>
+            <span>Render / imagen del proyecto</span>
+          </div>
+          <div class="card-overlay"></div>
+        </div>
+        <div class="card-info">
+          <span class="card-title">Título del proyecto</span>
+          <span class="card-tag">Hard Surface</span>
+        </div>
+      </div>
+
+      <!-- Proyecto 6 -->
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-ph">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect x="4" y="4" width="32" height="32" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M4 28l9-9 7 7 5-5 11 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="13" cy="14" r="3" stroke="currentColor" stroke-width="1.2"/></svg>
+            <span>Render / imagen del proyecto</span>
+          </div>
+          <div class="card-overlay"></div>
+        </div>
+        <div class="card-info">
+          <span class="card-title">Título del proyecto</span>
+          <span class="card-tag">Entorno</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="reveal">
+    <div>
+      <div class="section-label">Contacto</div>
+      <h2 class="contact-heading">Hablemos de tu<br><em>próximo proyecto</em></h2>
+    </div>
+    <div>
+      <div class="contact-links">
+        <!-- Sustituye los href con tus enlaces reales -->
+        <a href="mailto:tucorreo@email.com" class="contact-link">
+          <span>tucorreo@email.com</span>
+          <span class="contact-link-type">Email <span class="arrow">↗</span></span>
+        </a>
+        <a href="https://www.artstation.com/tu-usuario" target="_blank" class="contact-link">
+          <span>ArtStation</span>
+          <span class="contact-link-type">Portfolio <span class="arrow">↗</span></span>
+        </a>
+        <a href="https://www.linkedin.com/in/tu-usuario" target="_blank" class="contact-link">
+          <span>LinkedIn</span>
+          <span class="contact-link-type">Profesional <span class="arrow">↗</span></span>
+        </a>
+        <a href="https://www.instagram.com/tu-usuario" target="_blank" class="contact-link">
+          <span>Instagram</span>
+          <span class="contact-link-type">Proceso & WIPs <span class="arrow">↗</span></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 Miguel Asensio Mayayo</p>
+    <p>3D Artist · España</p>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(r => observer.observe(r));
+  </script>
+</body>
+</html>
