@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>LIONLIONLION — Miguel Asensio Mayayo · 3D Artist</title>
-<meta name="description" content="LIONLIONLION — Miguel Asensio Mayayo. 3D Artist. Portfolio of experimental 3D art, visual design and digital works." />
+<title>LIONLIONLION — Miguel Asensio Mayayo · Artista 3D</title>
+<meta name="description" content="LIONLIONLION — Miguel Asensio Mayayo. Artista 3D. Portfolio de arte 3D experimental, diseño visual y obras digitales." />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -20,28 +20,11 @@
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --font-display: 'Inter', sans-serif;
   --font-body:    'Inter', sans-serif;
+  --max-w: 1400px;
 }
 
-/* ── DARK THEME (default) ── */
+/* ── LIGHT THEME (default) ── */
 body {
-  --bg:      #000000;
-  --bg2:     #111111;
-  --bg3:     #1a1a1a;
-  --fg:      #ffffff;
-  --fg2:     rgba(255,255,255,0.65);
-  --fg3:     #888888;
-  --border:  rgba(255,255,255,0.08);
-  --border2: rgba(255,255,255,0.06);
-  --grid-line: rgba(0,71,255,0.05);
-  --noise-opacity: 0.03;
-  --scrollbar-bg: #000;
-  --stat-bg: #111111;
-  --form-bg: #111111;
-  --showreel-bg: #000;
-}
-
-/* ── LIGHT THEME ── */
-body.light {
   --bg:      #f0ede8;
   --bg2:     #e8e4de;
   --bg3:     #ddd9d2;
@@ -58,6 +41,24 @@ body.light {
   --showreel-bg: #ddd9d2;
 }
 
+/* ── DARK THEME ── */
+body.dark {
+  --bg:      #000000;
+  --bg2:     #111111;
+  --bg3:     #1a1a1a;
+  --fg:      #ffffff;
+  --fg2:     rgba(255,255,255,0.65);
+  --fg3:     #888888;
+  --border:  rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.06);
+  --grid-line: rgba(0,71,255,0.05);
+  --noise-opacity: 0.03;
+  --scrollbar-bg: #000;
+  --stat-bg: #111111;
+  --form-bg: #111111;
+  --showreel-bg: #000;
+}
+
 html { scroll-behavior: smooth; overflow-x: hidden; }
 
 body {
@@ -70,32 +71,34 @@ body {
   transition: background 0.4s ease, color 0.4s ease;
 }
 
-/* ─── CUSTOM CURSOR ──────────────────────────────── */
+/* ─── CUSTOM CURSOR — mix-blend-mode difference ──── */
 #cursor {
   position: fixed;
   top: 0; left: 0;
-  width: 12px; height: 12px;
-  background: var(--blue);
+  width: 14px; height: 14px;
+  background: #ffffff;
   border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
   transform: translate(-50%, -50%);
-  transition: width 0.2s var(--ease-out-expo), height 0.2s var(--ease-out-expo), background 0.2s ease, border-radius 0.2s ease;
+  mix-blend-mode: difference;
+  transition: width 0.2s var(--ease-out-expo), height 0.2s var(--ease-out-expo), border-radius 0.2s ease;
 }
 #cursor-ring {
   position: fixed;
   top: 0; left: 0;
-  width: 40px; height: 40px;
-  border: 1px solid rgba(0,71,255,0.5);
+  width: 44px; height: 44px;
+  border: 1.5px solid #ffffff;
   border-radius: 50%;
   pointer-events: none;
   z-index: 9998;
   transform: translate(-50%, -50%);
+  mix-blend-mode: difference;
   transition: transform 0.12s ease, width 0.3s var(--ease-out-expo), height 0.3s var(--ease-out-expo);
 }
-body.hovering #cursor { width: 6px; height: 6px; background: var(--fg); }
-body.hovering #cursor-ring { width: 60px; height: 60px; border-color: var(--blue); }
-body.clicking #cursor { width: 16px; height: 16px; border-radius: 2px; }
+body.hovering #cursor { width: 48px; height: 48px; border-radius: 50%; }
+body.hovering #cursor-ring { width: 0; height: 0; border: none; }
+body.clicking #cursor { width: 10px; height: 10px; border-radius: 2px; }
 
 /* ─── CUSTOM SCROLLBAR ───────────────────────────── */
 ::-webkit-scrollbar { width: 3px; }
@@ -122,22 +125,29 @@ body::before {
   100% { transform: translate(1px, 1px); }
 }
 
+/* ─── CENTRADO GLOBAL ────────────────────────────── */
+.container {
+  width: 100%;
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
 /* ─── NAV ────────────────────────────────────────── */
 nav {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 100;
-  padding: 0 40px;
   height: 72px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   transition: background 0.4s ease, backdrop-filter 0.4s ease;
 }
 nav::after {
   content: '';
   position: absolute;
-  bottom: 0; left: 40px; right: 40px;
+  bottom: 0; left: 0; right: 0;
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--border), transparent);
   opacity: 0;
@@ -145,6 +155,15 @@ nav::after {
 }
 nav.scrolled::after { opacity: 1; }
 nav.scrolled { background: color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter: blur(12px); }
+
+.nav-inner {
+  width: 100%;
+  max-width: var(--max-w);
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
 .nav-logo {
   font-family: var(--font-display);
@@ -158,7 +177,6 @@ nav.scrolled { background: color-mix(in srgb, var(--bg) 85%, transparent); backd
 }
 .nav-logo span { color: var(--blue); }
 
-/* ── NAV CENTER LINKS ── */
 .nav-links {
   display: flex;
   list-style: none;
@@ -191,7 +209,6 @@ nav.scrolled { background: color-mix(in srgb, var(--bg) 85%, transparent); backd
 .nav-links a:hover { color: var(--fg); }
 .nav-links a:hover::after { width: 100%; }
 
-/* ── NAV RIGHT: controls cluster ── */
 .nav-controls {
   display: flex;
   align-items: center;
@@ -199,11 +216,7 @@ nav.scrolled { background: color-mix(in srgb, var(--bg) 85%, transparent); backd
   flex-shrink: 0;
 }
 
-/* Lang toggle */
-.lang-toggle {
-  display: flex;
-  gap: 0;
-}
+.lang-toggle { display: flex; gap: 0; }
 .lang-toggle button {
   background: transparent;
   border: 1px solid var(--fg3);
@@ -228,7 +241,6 @@ nav.scrolled { background: color-mix(in srgb, var(--bg) 85%, transparent); backd
   border-color: var(--fg);
 }
 
-/* Divider between lang and theme */
 .nav-divider {
   width: 1px;
   height: 24px;
@@ -236,7 +248,6 @@ nav.scrolled { background: color-mix(in srgb, var(--bg) 85%, transparent); backd
   margin: 0 14px;
 }
 
-/* Theme toggle button */
 .theme-toggle {
   background: transparent;
   border: 1px solid var(--fg3);
@@ -250,10 +261,7 @@ nav.scrolled { background: color-mix(in srgb, var(--bg) 85%, transparent); backd
   transition: all 0.25s ease;
   flex-shrink: 0;
 }
-.theme-toggle:hover {
-  border-color: var(--blue);
-  color: var(--blue);
-}
+.theme-toggle:hover { border-color: var(--blue); color: var(--blue); }
 .theme-toggle svg { display: block; transition: transform 0.4s var(--ease-out-expo); }
 .theme-toggle:hover svg { transform: rotate(20deg); }
 
@@ -266,8 +274,14 @@ section { position: relative; overflow: hidden; }
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 0 40px 80px;
   position: relative;
+}
+
+.hero-inner {
+  width: 100%;
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 40px 80px;
 }
 
 .hero-grid {
@@ -287,8 +301,8 @@ section { position: relative; overflow: hidden; }
     0deg,
     transparent,
     transparent 2px,
-    rgba(0,0,0,0.04) 2px,
-    rgba(0,0,0,0.04) 4px
+    rgba(0,0,0,0.02) 2px,
+    rgba(0,0,0,0.02) 4px
   );
   pointer-events: none;
 }
@@ -302,7 +316,7 @@ section { position: relative; overflow: hidden; }
   font-style: italic;
   font-size: clamp(200px, 30vw, 420px);
   color: transparent;
-  -webkit-text-stroke: 1px rgba(0,71,255,0.12);
+  -webkit-text-stroke: 1px rgba(0,71,255,0.1);
   line-height: 1;
   user-select: none;
   pointer-events: none;
@@ -546,10 +560,7 @@ section { position: relative; overflow: hidden; }
   text-transform: uppercase;
   color: var(--fg);
 }
-.section-title em {
-  color: var(--blue);
-  font-style: italic;
-}
+.section-title em { color: var(--blue); font-style: italic; }
 .section-line {
   flex: 1;
   height: 1px;
@@ -558,7 +569,7 @@ section { position: relative; overflow: hidden; }
 
 /* ─── ABOUT ──────────────────────────────────────── */
 #about {
-  padding: 120px 40px;
+  padding: 120px 0;
   background: var(--bg2);
   transition: background 0.4s ease;
 }
@@ -568,7 +579,6 @@ section { position: relative; overflow: hidden; }
   grid-template-columns: 1fr 1fr;
   gap: 80px;
   align-items: start;
-  max-width: 1400px;
 }
 
 .about-image-frame {
@@ -672,12 +682,7 @@ section { position: relative; overflow: hidden; }
   margin-top: 6px;
 }
 
-/* ── SKILLS WITH ICONS ── */
-.skills-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
+.skills-list { display: flex; flex-wrap: wrap; gap: 8px; }
 .skill-tag {
   font-family: var(--font-display);
   font-weight: 700;
@@ -694,10 +699,7 @@ section { position: relative; overflow: hidden; }
   gap: 8px;
   background: transparent;
 }
-.skill-tag:hover {
-  border-color: var(--blue);
-  color: var(--blue);
-}
+.skill-tag:hover { border-color: var(--blue); color: var(--blue); }
 .skill-tag svg {
   width: 16px; height: 16px;
   flex-shrink: 0;
@@ -706,7 +708,7 @@ section { position: relative; overflow: hidden; }
 
 /* ─── PORTFOLIO ──────────────────────────────────── */
 #portfolio {
-  padding: 120px 40px;
+  padding: 120px 0;
   background: var(--bg);
   transition: background 0.4s ease;
 }
@@ -715,7 +717,6 @@ section { position: relative; overflow: hidden; }
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   gap: 2px;
-  max-width: 1400px;
 }
 
 .work-item {
@@ -827,14 +828,13 @@ section { position: relative; overflow: hidden; }
 
 /* ─── SHOWREEL ────────────────────────────────────── */
 #showreel {
-  padding: 120px 40px;
+  padding: 120px 0;
   background: var(--bg2);
   transition: background 0.4s ease;
 }
 
 .showreel-frame {
   position: relative;
-  max-width: 1400px;
   aspect-ratio: 16/9;
   background: var(--showreel-bg);
   overflow: hidden;
@@ -925,7 +925,7 @@ section { position: relative; overflow: hidden; }
 
 /* ─── CONTACT ─────────────────────────────────────── */
 #contact {
-  padding: 120px 40px 80px;
+  padding: 120px 0 80px;
   background: var(--bg);
   transition: background 0.4s ease;
 }
@@ -934,7 +934,6 @@ section { position: relative; overflow: hidden; }
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 80px;
-  max-width: 1400px;
   align-items: start;
 }
 
@@ -989,7 +988,6 @@ section { position: relative; overflow: hidden; }
 }
 .social-link:hover { padding-left: 12px; }
 .social-link:hover .social-name { color: var(--blue); }
-.social-link:hover .social-handle { color: var(--fg); }
 
 .social-platform {
   font-family: var(--font-display);
@@ -1021,7 +1019,6 @@ section { position: relative; overflow: hidden; }
 }
 .social-link:hover .social-arrow { transform: rotate(0deg); }
 
-/* Contact form */
 .contact-form-wrap { padding-top: 8px; }
 .form-group { position: relative; margin-bottom: 4px; }
 .form-group input,
@@ -1099,13 +1096,18 @@ textarea { height: 140px; }
 
 /* ─── FOOTER ─────────────────────────────────────── */
 footer {
-  padding: 32px 40px;
+  padding: 32px 0;
   border-top: 1px solid var(--border2);
+  background: var(--bg);
+  transition: background 0.4s ease;
+}
+.footer-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--bg);
-  transition: background 0.4s ease;
 }
 .footer-copy {
   font-family: var(--font-display);
@@ -1146,7 +1148,6 @@ footer {
 @media (max-width: 1100px) {
   .nav-links { display: none; }
 }
-
 @media (max-width: 1024px) {
   .about-grid { grid-template-columns: 1fr; gap: 60px; }
   .about-image-frame { max-width: 480px; }
@@ -1158,12 +1159,11 @@ footer {
   .work-item:nth-child(5) { grid-column: span 6; }
   .work-item:nth-child(6) { grid-column: span 6; }
 }
-
 @media (max-width: 768px) {
-  nav { padding: 0 20px; }
-  #hero { padding: 0 24px 60px; }
-  #about, #portfolio, #showreel, #contact { padding: 80px 24px; }
-  footer { padding: 24px; flex-direction: column; gap: 12px; text-align: center; }
+  .container, .nav-inner, .footer-inner { padding: 0 24px; }
+  .hero-inner { padding: 0 24px 60px; }
+  footer { padding: 24px 0; }
+  .footer-inner { flex-direction: column; gap: 12px; text-align: center; }
   .about-stats { grid-template-columns: 1fr 1fr; }
   .hero-bottom { flex-direction: column; align-items: flex-start; gap: 32px; }
   .hero-cta { align-items: flex-start; }
@@ -1177,7 +1177,7 @@ footer {
 #loader {
   position: fixed;
   inset: 0;
-  background: #000;
+  background: #f0ede8;
   z-index: 99999;
   display: flex;
   flex-direction: column;
@@ -1191,8 +1191,6 @@ footer {
   transform: translateY(-8px);
   pointer-events: none;
 }
-
-/* scanlines on loader */
 #loader::before {
   content: '';
   position: absolute;
@@ -1201,19 +1199,17 @@ footer {
     0deg,
     transparent,
     transparent 2px,
-    rgba(255,255,255,0.025) 2px,
-    rgba(255,255,255,0.025) 4px
+    rgba(0,0,0,0.01) 2px,
+    rgba(0,0,0,0.01) 4px
   );
   pointer-events: none;
 }
-
-/* noise on loader */
 #loader::after {
   content: '';
   position: absolute;
   inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-  opacity: 0.04;
+  opacity: 0.015;
   pointer-events: none;
 }
 
@@ -1233,7 +1229,7 @@ footer {
   font-size: 42px;
   letter-spacing: -0.03em;
   text-transform: uppercase;
-  color: #fff;
+  color: #0a0a0a;
   position: relative;
   animation: loader-glitch 2.5s steps(1) infinite;
 }
@@ -1242,7 +1238,7 @@ footer {
 @keyframes loader-glitch {
   0%,88%,100% { text-shadow: none; transform: translate(0); }
   89% { text-shadow: -2px 0 var(--blue); transform: translate(2px, -1px); }
-  90% { text-shadow:  2px 0 rgba(255,255,255,0.4); transform: translate(-2px, 1px); }
+  90% { text-shadow:  2px 0 rgba(0,0,0,0.2); transform: translate(-2px, 1px); }
   91% { text-shadow: none; transform: translate(0); }
   94% { text-shadow: -3px 0 var(--blue); transform: translate(1px, 0); }
   95% { text-shadow: none; transform: translate(0); }
@@ -1251,7 +1247,7 @@ footer {
 .loader-bar-wrap {
   width: 100%;
   height: 2px;
-  background: rgba(255,255,255,0.08);
+  background: rgba(0,0,0,0.1);
   position: relative;
   overflow: hidden;
 }
@@ -1262,7 +1258,7 @@ footer {
   width: 0%;
   background: var(--blue);
   transition: width 0.12s ease;
-  box-shadow: 0 0 12px rgba(0,71,255,0.6);
+  box-shadow: 0 0 12px rgba(0,71,255,0.4);
 }
 
 .loader-status {
@@ -1271,7 +1267,7 @@ footer {
   font-size: 10px;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.3);
+  color: rgba(0,0,0,0.3);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1289,7 +1285,7 @@ footer {
 .loader-corner {
   position: absolute;
   width: 20px; height: 20px;
-  border-color: rgba(0,71,255,0.35);
+  border-color: rgba(0,71,255,0.25);
   border-style: solid;
 }
 .loader-corner.tl { top: 24px; left: 24px; border-width: 1px 0 0 1px; }
@@ -1297,10 +1293,9 @@ footer {
 .loader-corner.bl { bottom: 24px; left: 24px; border-width: 0 0 1px 1px; }
 .loader-corner.br { bottom: 24px; right: 24px; border-width: 0 1px 1px 0; }
 
-/* body locked while loading */
 body.loading { overflow: hidden; }
 
-/* ─── HIDE/SHOW LANG ─────────────────────────────── */
+/* ─── LANG ─────────────────────────────────────── */
 [data-lang] { display: none; }
 body.lang-en [data-lang="en"] { display: block; }
 body.lang-es [data-lang="es"] { display: block; }
@@ -1310,7 +1305,8 @@ body.lang-es [data-lang-inline="es"] { display: inline; }
 </style>
 </head>
 
-<body class="lang-en loading">
+<!-- Tema claro + español por defecto -->
+<body class="lang-es loading">
 
 <!-- LOADER -->
 <div id="loader">
@@ -1325,51 +1321,54 @@ body.lang-es [data-lang-inline="es"] { display: inline; }
         <div class="loader-bar" id="loader-bar"></div>
       </div>
       <div class="loader-status">
-        <span id="loader-label">Initializing</span>
+        <span id="loader-label">Inicializando</span>
         <span class="loader-pct" id="loader-pct">0%</span>
       </div>
     </div>
   </div>
 </div>
 
+<!-- CURSOR — mix-blend-mode: difference para invertir colores -->
 <div id="cursor"></div>
 <div id="cursor-ring"></div>
 
-<!-- NAV — logo | links (centered) | controls (lang + theme) -->
+<!-- NAV -->
 <nav id="nav">
-  <a href="#hero" class="nav-logo">LION<span>LION</span>LION</a>
+  <div class="nav-inner">
+    <a href="#hero" class="nav-logo">LION<span>LION</span>LION</a>
 
-  <ul class="nav-links">
-    <li><a href="#about"><span data-lang-inline="en">About</span><span data-lang-inline="es">Sobre mí</span></a></li>
-    <li><a href="#portfolio"><span data-lang-inline="en">Works</span><span data-lang-inline="es">Obras</span></a></li>
-    <li><a href="#showreel">Showreel</a></li>
-    <li><a href="#contact"><span data-lang-inline="en">Contact</span><span data-lang-inline="es">Contacto</span></a></li>
-  </ul>
+    <ul class="nav-links">
+      <li><a href="#about"><span data-lang-inline="en">About</span><span data-lang-inline="es">Sobre mí</span></a></li>
+      <li><a href="#portfolio"><span data-lang-inline="en">Works</span><span data-lang-inline="es">Obras</span></a></li>
+      <li><a href="#showreel">Showreel</a></li>
+      <li><a href="#contact"><span data-lang-inline="en">Contact</span><span data-lang-inline="es">Contacto</span></a></li>
+    </ul>
 
-  <div class="nav-controls">
-    <div class="lang-toggle">
-      <button class="active" onclick="setLang('en')">EN</button>
-      <button onclick="setLang('es')">ES</button>
+    <div class="nav-controls">
+      <div class="lang-toggle">
+        <button onclick="setLang('en')">EN</button>
+        <button class="active" onclick="setLang('es')">ES</button>
+      </div>
+      <div class="nav-divider"></div>
+      <button class="theme-toggle" id="themeBtn" title="Cambiar tema" onclick="toggleTheme()">
+        <!-- Moon icon (shown in light mode = default) -->
+        <svg id="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+        <!-- Sun icon (shown in dark mode) -->
+        <svg id="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+      </button>
     </div>
-    <div class="nav-divider"></div>
-    <button class="theme-toggle" id="themeBtn" title="Toggle theme" onclick="toggleTheme()">
-      <!-- Sun icon (shown in dark mode) -->
-      <svg id="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="5"/>
-        <line x1="12" y1="1" x2="12" y2="3"/>
-        <line x1="12" y1="21" x2="12" y2="23"/>
-        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-        <line x1="1" y1="12" x2="3" y2="12"/>
-        <line x1="21" y1="12" x2="23" y2="12"/>
-        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-      </svg>
-      <!-- Moon icon (shown in light mode) -->
-      <svg id="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-      </svg>
-    </button>
   </div>
 </nav>
 
@@ -1379,36 +1378,37 @@ body.lang-es [data-lang-inline="es"] { display: inline; }
   <div class="hero-scanlines"></div>
   <div class="hero-number">3D</div>
 
-  <div class="hero-status" data-lang="en">Available for projects</div>
-  <div class="hero-status" data-lang="es">Disponible para proyectos</div>
+  <div class="hero-inner">
+    <div class="hero-status" data-lang="en">Available for projects</div>
+    <div class="hero-status" data-lang="es">Disponible para proyectos</div>
 
-  <div class="hero-title-wrap">
-    <span class="hero-title glitch" data-text="LIONLIONLION">LIONLIONLION</span>
-    <span class="hero-subtitle">Miguel Asensio Mayayo</span>
-  </div>
+    <div class="hero-title-wrap">
+      <span class="hero-title glitch" data-text="LIONLIONLION">LIONLIONLION</span>
+      <span class="hero-subtitle">Miguel Asensio Mayayo</span>
+    </div>
 
-  <div class="hero-bottom">
-    <p class="hero-desc" data-lang="en">
-      <strong>3D Artist</strong> pushing the boundaries of digital reality.
-      Experimental geometry, cinematic light, and textures that breathe.
-      Based in <strong>Zaragoza, Spain</strong> — working worldwide.
-    </p>
-    <p class="hero-desc" data-lang="es">
-      <strong>Artista 3D</strong> que empuja los límites de la realidad digital.
-      Geometría experimental, luz cinematográfica y texturas con vida propia.
-      Con base en <strong>Zaragoza, España</strong> — trabajando globalmente.
-    </p>
+    <div class="hero-bottom">
+      <p class="hero-desc" data-lang="en">
+        <strong>3D Artist</strong> pushing the boundaries of digital reality.
+        Experimental geometry, cinematic light, and textures that breathe.
+        Based in <strong>Zaragoza, Spain</strong> — working worldwide.
+      </p>
+      <p class="hero-desc" data-lang="es">
+        <strong>Artista 3D</strong> que empuja los límites de la realidad digital.
+        Geometría experimental, luz cinematográfica y texturas con vida propia.
+        Con base en <strong>Zaragoza, España</strong> — trabajando globalmente.
+      </p>
 
-    <div class="hero-cta">
-      <a href="#portfolio" class="btn-primary">
-        <span data-lang-inline="en">View Works</span>
-        <span data-lang-inline="es">Ver Obras</span>
-        <span class="arrow">→</span>
-      </a>
-      <div class="hero-scroll-hint">
-        <span class="scroll-line"></span>
-        <span data-lang-inline="en">Scroll</span>
-        <span data-lang-inline="es">Scroll</span>
+      <div class="hero-cta">
+        <a href="#portfolio" class="btn-primary">
+          <span data-lang-inline="en">View Works</span>
+          <span data-lang-inline="es">Ver Obras</span>
+          <span class="arrow">→</span>
+        </a>
+        <div class="hero-scroll-hint">
+          <span class="scroll-line"></span>
+          <span>Scroll</span>
+        </div>
       </div>
     </div>
   </div>
@@ -1417,17 +1417,17 @@ body.lang-es [data-lang-inline="es"] { display: inline; }
 <!-- MARQUEE -->
 <div class="marquee-wrap">
   <div class="marquee-track">
-    <span class="marquee-item">3D Art</span>
+    <span class="marquee-item">Arte 3D</span>
     <span class="marquee-item">Motion Design</span>
     <span class="marquee-item">Experimental</span>
-    <span class="marquee-item">Digital Sculpture</span>
+    <span class="marquee-item">Escultura Digital</span>
     <span class="marquee-item">Visual FX</span>
     <span class="marquee-item">Rendering</span>
     <span class="marquee-item">Concept Art</span>
-    <span class="marquee-item">3D Art</span>
+    <span class="marquee-item">Arte 3D</span>
     <span class="marquee-item">Motion Design</span>
     <span class="marquee-item">Experimental</span>
-    <span class="marquee-item">Digital Sculpture</span>
+    <span class="marquee-item">Escultura Digital</span>
     <span class="marquee-item">Visual FX</span>
     <span class="marquee-item">Rendering</span>
     <span class="marquee-item">Concept Art</span>
@@ -1436,141 +1436,125 @@ body.lang-es [data-lang-inline="es"] { display: inline; }
 
 <!-- ABOUT -->
 <section id="about">
-  <div class="section-header reveal">
-    <span class="section-num">01 —</span>
-    <h2 class="section-title"><span data-lang-inline="en">About</span><span data-lang-inline="es">Sobre mí</span></h2>
-    <div class="section-line"></div>
-  </div>
-
-  <div class="about-grid">
-    <div class="about-image-frame reveal">
-      <div class="about-image-placeholder">MAM</div>
-      <div class="about-image-corner tl"></div>
-      <div class="about-image-corner br"></div>
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-num">01 —</span>
+      <h2 class="section-title"><span data-lang-inline="en">About</span><span data-lang-inline="es">Sobre mí</span></h2>
+      <div class="section-line"></div>
     </div>
 
-    <div class="about-content reveal">
-      <div class="about-tag" data-lang="en">3D Artist · Digital Creator</div>
-      <div class="about-tag" data-lang="es">Artista 3D · Creador Digital</div>
-
-      <p class="about-bio" data-lang="en">
-        I'm <strong>Miguel Asensio Mayayo</strong>, working under the alias
-        <span class="highlight">LIONLIONLION</span>. I create experimental 3D work
-        that lives in the space between sculpture, architecture and visual noise.
-        <br /><br />
-        My process begins with obsessive geometry and ends with
-        <strong>images that feel real but shouldn't exist</strong>.
-        I work with clients across advertising, music, and fashion
-        while developing personal projects that push form beyond function.
-      </p>
-      <p class="about-bio" data-lang="es">
-        Soy <strong>Miguel Asensio Mayayo</strong>, y trabajo bajo el alias
-        <span class="highlight">LIONLIONLION</span>. Creo obra 3D experimental
-        que vive en el espacio entre la escultura, la arquitectura y el ruido visual.
-        <br /><br />
-        Mi proceso comienza con geometría obsesiva y termina con
-        <strong>imágenes que parecen reales pero no deberían existir</strong>.
-        Trabajo con clientes de publicidad, música y moda
-        mientras desarrollo proyectos personales que llevan la forma más allá de la función.
-      </p>
-
-      <div class="about-stats">
-        <div class="stat-item">
-          <span class="stat-num">+50</span>
-          <span class="stat-label" data-lang="en">Projects</span>
-          <span class="stat-label" data-lang="es">Proyectos</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-num">6+</span>
-          <span class="stat-label" data-lang="en">Years</span>
-          <span class="stat-label" data-lang="es">Años</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-num">∞</span>
-          <span class="stat-label" data-lang="en">Renders</span>
-          <span class="stat-label" data-lang="es">Renders</span>
-        </div>
+    <div class="about-grid">
+      <div class="about-image-frame reveal">
+        <div class="about-image-placeholder">MAM</div>
+        <div class="about-image-corner tl"></div>
+        <div class="about-image-corner br"></div>
       </div>
 
-      <!-- Skills with SVG icons -->
-      <div class="skills-list">
+      <div class="about-content reveal">
+        <div class="about-tag" data-lang="en">3D Artist · Digital Creator</div>
+        <div class="about-tag" data-lang="es">Artista 3D · Creador Digital</div>
 
-        <!-- Cinema 4D -->
-        <span class="skill-tag">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/>
-            <line x1="12" y1="3" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="21"/>
-          </svg>
-          Cinema 4D
-        </span>
+        <p class="about-bio" data-lang="en">
+          I'm <strong>Miguel Asensio Mayayo</strong>, working under the alias
+          <span class="highlight">LIONLIONLION</span>. I create experimental 3D work
+          that lives in the space between sculpture, architecture and visual noise.
+          <br /><br />
+          My process begins with obsessive geometry and ends with
+          <strong>images that feel real but shouldn't exist</strong>.
+          I work with clients across advertising, music, and fashion
+          while developing personal projects that push form beyond function.
+        </p>
+        <p class="about-bio" data-lang="es">
+          Soy <strong>Miguel Asensio Mayayo</strong>, y trabajo bajo el alias
+          <span class="highlight">LIONLIONLION</span>. Creo obra 3D experimental
+          que vive en el espacio entre la escultura, la arquitectura y el ruido visual.
+          <br /><br />
+          Mi proceso comienza con geometría obsesiva y termina con
+          <strong>imágenes que parecen reales pero no deberían existir</strong>.
+          Trabajo con clientes de publicidad, música y moda
+          mientras desarrollo proyectos personales que llevan la forma más allá de la función.
+        </p>
 
-        <!-- Blender -->
-        <span class="skill-tag">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M5 15a7 7 0 1 0 14 0 7 7 0 0 0-14 0z"/>
-            <path d="M12 8V4M8 9l-3-3M16 9l3-3"/>
-            <circle cx="12" cy="15" r="2" fill="currentColor" stroke="none"/>
-          </svg>
-          Blender
-        </span>
+        <div class="about-stats">
+          <div class="stat-item">
+            <span class="stat-num">+50</span>
+            <span class="stat-label" data-lang="en">Projects</span>
+            <span class="stat-label" data-lang="es">Proyectos</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">6+</span>
+            <span class="stat-label" data-lang="en">Years</span>
+            <span class="stat-label" data-lang="es">Años</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">∞</span>
+            <span class="stat-label" data-lang="en">Renders</span>
+            <span class="stat-label" data-lang="es">Renders</span>
+          </div>
+        </div>
 
-        <!-- Octane -->
-        <span class="skill-tag">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <polygon points="12,2 22,19 2,19"/>
-            <line x1="12" y1="8" x2="12" y2="14"/>
-            <circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"/>
-          </svg>
-          Octane
-        </span>
-
-        <!-- Redshift -->
-        <span class="skill-tag">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M3 12 Q8 4 12 12 Q16 20 21 12"/>
-            <path d="M3 17 Q8 9 12 17 Q16 25 21 17" opacity="0.4"/>
-          </svg>
-          Redshift
-        </span>
-
-        <!-- Houdini -->
-        <span class="skill-tag">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M12 3 L19 7 L19 17 L12 21 L5 17 L5 7 Z"/>
-            <path d="M12 3 L12 21M5 7 L19 17M19 7 L5 17" opacity="0.3"/>
-          </svg>
-          Houdini
-        </span>
-
-        <!-- After Effects -->
-        <span class="skill-tag">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <rect x="3" y="3" width="18" height="18" rx="2"/>
-            <path d="M7 16 L10 8 L13 16M8.5 13 H11.5"/>
-            <path d="M14 8 H17 M14 12 H16.5 M14 16 V8"/>
-          </svg>
-          After Effects
-        </span>
-
-        <!-- ZBrush -->
-        <span class="skill-tag">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M6 18 C6 18 8 6 12 6 C16 6 18 10 18 12 C18 15 15 18 12 18 C10 18 8 17 7 15"/>
-            <path d="M10 12 C10 12 11 10 13 11 C14 12 13 14 12 14"/>
-          </svg>
-          ZBrush
-        </span>
-
-        <!-- Substance -->
-        <span class="skill-tag">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <rect x="4" y="4" width="16" height="16" rx="3"/>
-            <path d="M4 12 Q8 8 12 12 Q16 16 20 12" opacity="0.6"/>
-            <path d="M4 16 Q8 12 12 16 Q16 20 20 16" opacity="0.3"/>
-          </svg>
-          Substance
-        </span>
-
+        <div class="skills-list">
+          <span class="skill-tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/>
+              <line x1="12" y1="3" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="21"/>
+            </svg>
+            Cinema 4D
+          </span>
+          <span class="skill-tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M5 15a7 7 0 1 0 14 0 7 7 0 0 0-14 0z"/>
+              <path d="M12 8V4M8 9l-3-3M16 9l3-3"/>
+              <circle cx="12" cy="15" r="2" fill="currentColor" stroke="none"/>
+            </svg>
+            Blender
+          </span>
+          <span class="skill-tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polygon points="12,2 22,19 2,19"/>
+              <line x1="12" y1="8" x2="12" y2="14"/>
+              <circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"/>
+            </svg>
+            Octane
+          </span>
+          <span class="skill-tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M3 12 Q8 4 12 12 Q16 20 21 12"/>
+              <path d="M3 17 Q8 9 12 17 Q16 25 21 17" opacity="0.4"/>
+            </svg>
+            Redshift
+          </span>
+          <span class="skill-tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 3 L19 7 L19 17 L12 21 L5 17 L5 7 Z"/>
+              <path d="M12 3 L12 21M5 7 L19 17M19 7 L5 17" opacity="0.3"/>
+            </svg>
+            Houdini
+          </span>
+          <span class="skill-tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M7 16 L10 8 L13 16M8.5 13 H11.5"/>
+              <path d="M14 8 H17 M14 12 H16.5 M14 16 V8"/>
+            </svg>
+            After Effects
+          </span>
+          <span class="skill-tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M6 18 C6 18 8 6 12 6 C16 6 18 10 18 12 C18 15 15 18 12 18 C10 18 8 17 7 15"/>
+              <path d="M10 12 C10 12 11 10 13 11 C14 12 13 14 12 14"/>
+            </svg>
+            ZBrush
+          </span>
+          <span class="skill-tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="4" y="4" width="16" height="16" rx="3"/>
+              <path d="M4 12 Q8 8 12 12 Q16 16 20 12" opacity="0.6"/>
+              <path d="M4 16 Q8 12 12 16 Q16 20 20 16" opacity="0.3"/>
+            </svg>
+            Substance
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -1578,70 +1562,72 @@ body.lang-es [data-lang-inline="es"] { display: inline; }
 
 <!-- PORTFOLIO -->
 <section id="portfolio">
-  <div class="section-header reveal">
-    <span class="section-num">02 —</span>
-    <h2 class="section-title"><span data-lang-inline="en">Selected <em>Works</em></span><span data-lang-inline="es">Obras <em>Selectas</em></span></h2>
-    <div class="section-line"></div>
-  </div>
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-num">02 —</span>
+      <h2 class="section-title"><span data-lang-inline="en">Selected <em>Works</em></span><span data-lang-inline="es">Obras <em>Selectas</em></span></h2>
+      <div class="section-line"></div>
+    </div>
 
-  <div class="portfolio-grid">
-    <div class="work-item reveal">
-      <div class="work-placeholder"><span class="work-placeholder-label">01</span></div>
-      <div class="work-overlay">
-        <h3 class="work-title" data-lang="en">Void Architecture</h3>
-        <h3 class="work-title" data-lang="es">Arquitectura del Vacío</h3>
-        <div class="work-tags">
-          <span class="work-tag">3D</span><span class="work-tag">Motion</span><span class="work-tag">Octane</span>
+    <div class="portfolio-grid">
+      <div class="work-item reveal">
+        <div class="work-placeholder"><span class="work-placeholder-label">01</span></div>
+        <div class="work-overlay">
+          <h3 class="work-title" data-lang="en">Void Architecture</h3>
+          <h3 class="work-title" data-lang="es">Arquitectura del Vacío</h3>
+          <div class="work-tags">
+            <span class="work-tag">3D</span><span class="work-tag">Motion</span><span class="work-tag">Octane</span>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="work-item reveal">
-      <div class="work-placeholder"><span class="work-placeholder-label">02</span></div>
-      <div class="work-overlay">
-        <h3 class="work-title" data-lang="en">Liquid Chrome</h3>
-        <h3 class="work-title" data-lang="es">Cromo Líquido</h3>
-        <div class="work-tags">
-          <span class="work-tag">Sculpture</span><span class="work-tag">Redshift</span>
+      <div class="work-item reveal">
+        <div class="work-placeholder"><span class="work-placeholder-label">02</span></div>
+        <div class="work-overlay">
+          <h3 class="work-title" data-lang="en">Liquid Chrome</h3>
+          <h3 class="work-title" data-lang="es">Cromo Líquido</h3>
+          <div class="work-tags">
+            <span class="work-tag">Sculpture</span><span class="work-tag">Redshift</span>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="work-item reveal">
-      <div class="work-placeholder"><span class="work-placeholder-label">03</span></div>
-      <div class="work-overlay">
-        <h3 class="work-title" data-lang="en">Geometry Dream</h3>
-        <h3 class="work-title" data-lang="es">Sueño Geométrico</h3>
-        <div class="work-tags">
-          <span class="work-tag">Abstract</span><span class="work-tag">C4D</span>
+      <div class="work-item reveal">
+        <div class="work-placeholder"><span class="work-placeholder-label">03</span></div>
+        <div class="work-overlay">
+          <h3 class="work-title" data-lang="en">Geometry Dream</h3>
+          <h3 class="work-title" data-lang="es">Sueño Geométrico</h3>
+          <div class="work-tags">
+            <span class="work-tag">Abstract</span><span class="work-tag">C4D</span>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="work-item reveal">
-      <div class="work-placeholder"><span class="work-placeholder-label">04</span></div>
-      <div class="work-overlay">
-        <h3 class="work-title" data-lang="en">Fractal Mass</h3>
-        <h3 class="work-title" data-lang="es">Masa Fractal</h3>
-        <div class="work-tags">
-          <span class="work-tag">Houdini</span><span class="work-tag">VFX</span><span class="work-tag">Simulation</span>
+      <div class="work-item reveal">
+        <div class="work-placeholder"><span class="work-placeholder-label">04</span></div>
+        <div class="work-overlay">
+          <h3 class="work-title" data-lang="en">Fractal Mass</h3>
+          <h3 class="work-title" data-lang="es">Masa Fractal</h3>
+          <div class="work-tags">
+            <span class="work-tag">Houdini</span><span class="work-tag">VFX</span><span class="work-tag">Simulation</span>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="work-item reveal">
-      <div class="work-placeholder"><span class="work-placeholder-label">05</span></div>
-      <div class="work-overlay">
-        <h3 class="work-title" data-lang="en">Signal Decay</h3>
-        <h3 class="work-title" data-lang="es">Decaimiento de Señal</h3>
-        <div class="work-tags">
-          <span class="work-tag">Glitch</span><span class="work-tag">Motion</span>
+      <div class="work-item reveal">
+        <div class="work-placeholder"><span class="work-placeholder-label">05</span></div>
+        <div class="work-overlay">
+          <h3 class="work-title" data-lang="en">Signal Decay</h3>
+          <h3 class="work-title" data-lang="es">Decaimiento de Señal</h3>
+          <div class="work-tags">
+            <span class="work-tag">Glitch</span><span class="work-tag">Motion</span>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="work-item reveal">
-      <div class="work-placeholder"><span class="work-placeholder-label">06</span></div>
-      <div class="work-overlay">
-        <h3 class="work-title" data-lang="en">Hyperobject I</h3>
-        <h3 class="work-title" data-lang="es">Hiperobjeto I</h3>
-        <div class="work-tags">
-          <span class="work-tag">Concept</span><span class="work-tag">3D</span>
+      <div class="work-item reveal">
+        <div class="work-placeholder"><span class="work-placeholder-label">06</span></div>
+        <div class="work-overlay">
+          <h3 class="work-title" data-lang="en">Hyperobject I</h3>
+          <h3 class="work-title" data-lang="es">Hiperobjeto I</h3>
+          <div class="work-tags">
+            <span class="work-tag">Concept</span><span class="work-tag">3D</span>
+          </div>
         </div>
       </div>
     </div>
@@ -1650,143 +1636,148 @@ body.lang-es [data-lang-inline="es"] { display: inline; }
 
 <!-- SHOWREEL -->
 <section id="showreel">
-  <div class="section-header reveal">
-    <span class="section-num">03 —</span>
-    <h2 class="section-title">Show<em>reel</em></h2>
-    <div class="section-line"></div>
-  </div>
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-num">03 —</span>
+      <h2 class="section-title">Show<em>reel</em></h2>
+      <div class="section-line"></div>
+    </div>
 
-  <div class="showreel-frame reveal">
-    <div class="showreel-hud">REC ● 00:00:00:00</div>
-    <div class="showreel-hud-right">LIONLIONLION / 2025</div>
-    <div class="showreel-corner tl"></div>
-    <div class="showreel-corner tr"></div>
-    <div class="showreel-corner bl"></div>
-    <div class="showreel-corner br"></div>
-    <div class="showreel-placeholder">
-      <div class="play-btn">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="rgba(0,71,255,0.8)">
-          <polygon points="5,3 19,12 5,21"/>
-        </svg>
+    <div class="showreel-frame reveal">
+      <div class="showreel-hud">REC ● 00:00:00:00</div>
+      <div class="showreel-hud-right">LIONLIONLION / 2025</div>
+      <div class="showreel-corner tl"></div>
+      <div class="showreel-corner tr"></div>
+      <div class="showreel-corner bl"></div>
+      <div class="showreel-corner br"></div>
+      <div class="showreel-placeholder">
+        <div class="play-btn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="rgba(0,71,255,0.8)">
+            <polygon points="5,3 19,12 5,21"/>
+          </svg>
+        </div>
+        <span class="showreel-label" data-lang="en">Add your Vimeo / YouTube embed here</span>
+        <span class="showreel-label" data-lang="es">Añade aquí tu embed de Vimeo / YouTube</span>
       </div>
-      <span class="showreel-label" data-lang="en">Add your Vimeo / YouTube embed here</span>
-      <span class="showreel-label" data-lang="es">Añade aquí tu embed de Vimeo / YouTube</span>
     </div>
   </div>
 </section>
 
 <!-- CONTACT -->
 <section id="contact">
-  <div class="section-header reveal">
-    <span class="section-num">04 —</span>
-    <h2 class="section-title"><span data-lang-inline="en">Get in <em>Touch</em></span><span data-lang-inline="es">Ponte en <em>Contacto</em></span></h2>
-    <div class="section-line"></div>
-  </div>
-
-  <div class="contact-grid">
-    <div class="reveal">
-      <h3 class="contact-intro" data-lang="en">Let's build something <em>impossible.</em></h3>
-      <h3 class="contact-intro" data-lang="es">Hagamos algo <em>imposible.</em></h3>
-
-      <p class="contact-text" data-lang="en">Available for commissions, collaborations and freelance projects.
-      I work across advertising, music, fashion and personal art direction.</p>
-      <p class="contact-text" data-lang="es">Disponible para encargos, colaboraciones y proyectos freelance.
-      Trabajo en publicidad, música, moda y dirección de arte personal.</p>
-
-      <a href="mailto:hello@lionlionlion.com" class="contact-email-link">
-        hello@lionlionlion.com →
-      </a>
-
-      <div class="social-links">
-        <a href="https://www.instagram.com/" target="_blank" rel="noopener" class="social-link">
-          <span class="social-platform">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-              <rect x="2" y="2" width="20" height="20" rx="5"/>
-              <circle cx="12" cy="12" r="5"/>
-              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
-            </svg>
-            Instagram
-          </span>
-          <span class="social-name">@lionlionlion</span>
-          <span class="social-arrow">↗</span>
-        </a>
-        <a href="https://www.artstation.com/" target="_blank" rel="noopener" class="social-link">
-          <span class="social-platform">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-              <path d="M3 17 L8 8 L13 17"/>
-              <path d="M10 13 H16 L19 17"/>
-              <path d="M6 17 H19"/>
-            </svg>
-            ArtStation
-          </span>
-          <span class="social-name">lionlionlion</span>
-          <span class="social-arrow">↗</span>
-        </a>
-        <a href="https://www.linkedin.com/" target="_blank" rel="noopener" class="social-link">
-          <span class="social-platform">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-              <rect x="2" y="2" width="20" height="20" rx="3"/>
-              <line x1="8" y1="10" x2="8" y2="17"/>
-              <line x1="8" y1="7" x2="8" y2="7.5"/>
-              <path d="M12 10 V17 M12 13 C12 11 16 10 16 13 V17"/>
-            </svg>
-            LinkedIn
-          </span>
-          <span class="social-name">Miguel Asensio Mayayo</span>
-          <span class="social-arrow">↗</span>
-        </a>
-      </div>
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-num">04 —</span>
+      <h2 class="section-title"><span data-lang-inline="en">Get in <em>Touch</em></span><span data-lang-inline="es">Ponte en <em>Contacto</em></span></h2>
+      <div class="section-line"></div>
     </div>
 
-    <div class="contact-form-wrap reveal">
-      <form onsubmit="handleForm(event)">
-        <div class="form-group">
-          <input type="text" id="name" placeholder=" " autocomplete="off" />
-          <label for="name"><span data-lang-inline="en">Name</span><span data-lang-inline="es">Nombre</span></label>
+    <div class="contact-grid">
+      <div class="reveal">
+        <h3 class="contact-intro" data-lang="en">Let's build something <em>impossible.</em></h3>
+        <h3 class="contact-intro" data-lang="es">Hagamos algo <em>imposible.</em></h3>
+
+        <p class="contact-text" data-lang="en">Available for commissions, collaborations and freelance projects.
+        I work across advertising, music, fashion and personal art direction.</p>
+        <p class="contact-text" data-lang="es">Disponible para encargos, colaboraciones y proyectos freelance.
+        Trabajo en publicidad, música, moda y dirección de arte personal.</p>
+
+        <a href="mailto:hello@lionlionlion.com" class="contact-email-link">
+          hello@lionlionlion.com →
+        </a>
+
+        <div class="social-links">
+          <a href="https://www.instagram.com/" target="_blank" rel="noopener" class="social-link">
+            <span class="social-platform">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <rect x="2" y="2" width="20" height="20" rx="5"/>
+                <circle cx="12" cy="12" r="5"/>
+                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+              </svg>
+              Instagram
+            </span>
+            <span class="social-name">@lionlionlion</span>
+            <span class="social-arrow">↗</span>
+          </a>
+          <a href="https://www.artstation.com/" target="_blank" rel="noopener" class="social-link">
+            <span class="social-platform">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <path d="M3 17 L8 8 L13 17"/>
+                <path d="M10 13 H16 L19 17"/>
+                <path d="M6 17 H19"/>
+              </svg>
+              ArtStation
+            </span>
+            <span class="social-name">lionlionlion</span>
+            <span class="social-arrow">↗</span>
+          </a>
+          <a href="https://www.linkedin.com/" target="_blank" rel="noopener" class="social-link">
+            <span class="social-platform">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <rect x="2" y="2" width="20" height="20" rx="3"/>
+                <line x1="8" y1="10" x2="8" y2="17"/>
+                <line x1="8" y1="7" x2="8" y2="7.5"/>
+                <path d="M12 10 V17 M12 13 C12 11 16 10 16 13 V17"/>
+              </svg>
+              LinkedIn
+            </span>
+            <span class="social-name">Miguel Asensio Mayayo</span>
+            <span class="social-arrow">↗</span>
+          </a>
         </div>
-        <div class="form-group" style="margin-top:4px">
-          <input type="email" id="email" placeholder=" " autocomplete="off" />
-          <label for="email">Email</label>
-        </div>
-        <div class="form-group" style="margin-top:4px">
-          <textarea id="message" placeholder=" "></textarea>
-          <label for="message"><span data-lang-inline="en">Message</span><span data-lang-inline="es">Mensaje</span></label>
-        </div>
-        <button type="submit" class="form-submit">
-          <span><span data-lang-inline="en">Send Message →</span><span data-lang-inline="es">Enviar Mensaje →</span></span>
-        </button>
-      </form>
+      </div>
+
+      <div class="contact-form-wrap reveal">
+        <form onsubmit="handleForm(event)">
+          <div class="form-group">
+            <input type="text" id="name" placeholder=" " autocomplete="off" />
+            <label for="name"><span data-lang-inline="en">Name</span><span data-lang-inline="es">Nombre</span></label>
+          </div>
+          <div class="form-group" style="margin-top:4px">
+            <input type="email" id="email" placeholder=" " autocomplete="off" />
+            <label for="email">Email</label>
+          </div>
+          <div class="form-group" style="margin-top:4px">
+            <textarea id="message" placeholder=" "></textarea>
+            <label for="message"><span data-lang-inline="en">Message</span><span data-lang-inline="es">Mensaje</span></label>
+          </div>
+          <button type="submit" class="form-submit">
+            <span><span data-lang-inline="en">Send Message →</span><span data-lang-inline="es">Enviar Mensaje →</span></span>
+          </button>
+        </form>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <span class="footer-copy">© 2025 <span>LIONLIONLION</span> — Miguel Asensio Mayayo. All rights reserved.</span>
-  <span class="footer-logo">LLL</span>
+  <div class="footer-inner">
+    <span class="footer-copy">© 2025 <span>LIONLIONLION</span> — Miguel Asensio Mayayo. Todos los derechos reservados.</span>
+    <span class="footer-logo">LLL</span>
+  </div>
 </footer>
 
 <script>
 /* === LOADER === */
 (function() {
-  const bar     = document.getElementById('loader-bar');
-  const pct     = document.getElementById('loader-pct');
-  const label   = document.getElementById('loader-label');
-  const loader  = document.getElementById('loader');
+  const bar    = document.getElementById('loader-bar');
+  const pct    = document.getElementById('loader-pct');
+  const label  = document.getElementById('loader-label');
+  const loader = document.getElementById('loader');
 
   const steps = [
-    { p: 15,  text: 'Loading assets'     },
-    { p: 35,  text: 'Building geometry'  },
-    { p: 58,  text: 'Compiling shaders'  },
-    { p: 74,  text: 'Rendering scene'    },
-    { p: 90,  text: 'Finalizing'         },
-    { p: 100, text: 'Ready'              },
+    { p: 15,  text: 'Cargando assets'    },
+    { p: 35,  text: 'Construyendo geometría' },
+    { p: 58,  text: 'Compilando shaders' },
+    { p: 74,  text: 'Renderizando escena'},
+    { p: 90,  text: 'Finalizando'        },
+    { p: 100, text: 'Listo'              },
   ];
 
   let i = 0;
   function next() {
     if (i >= steps.length) {
-      // Small pause at 100%, then dismiss
       setTimeout(() => {
         loader.classList.add('hide');
         document.body.classList.remove('loading');
@@ -1798,17 +1789,14 @@ body.lang-es [data-lang-inline="es"] { display: inline; }
     bar.style.width   = s.p + '%';
     pct.textContent   = s.p + '%';
     label.textContent = s.text;
-    // Random interval between steps for organic feel
     setTimeout(next, 200 + Math.random() * 320);
   }
-
-  // Short initial delay before starting
   setTimeout(next, 180);
 })();
 
-/* === CURSOR === */
+/* === CURSOR (mix-blend-mode difference) === */
 const cursor = document.getElementById('cursor');
-const ring = document.getElementById('cursor-ring');
+const ring   = document.getElementById('cursor-ring');
 let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
 
 document.addEventListener('mousemove', e => {
@@ -1846,20 +1834,19 @@ function setLang(lang) {
   });
 }
 
-/* === THEME TOGGLE === */
+/* === THEME TOGGLE (claro por defecto, oscuro al activar) === */
 function toggleTheme() {
-  const isLight = document.body.classList.toggle('light');
-  document.getElementById('icon-sun').style.display  = isLight ? 'none'  : 'block';
-  document.getElementById('icon-moon').style.display = isLight ? 'block' : 'none';
-  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  const isDark = document.body.classList.toggle('dark');
+  document.getElementById('icon-sun').style.display  = isDark ? 'block' : 'none';
+  document.getElementById('icon-moon').style.display = isDark ? 'none'  : 'block';
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
 }
-// Restore saved theme
 (function() {
   const saved = localStorage.getItem('theme');
-  if (saved === 'light') {
-    document.body.classList.add('light');
-    document.getElementById('icon-sun').style.display  = 'none';
-    document.getElementById('icon-moon').style.display = 'block';
+  if (saved === 'dark') {
+    document.body.classList.add('dark');
+    document.getElementById('icon-sun').style.display  = 'block';
+    document.getElementById('icon-moon').style.display = 'none';
   }
 })();
 
