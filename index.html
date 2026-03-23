@@ -2214,27 +2214,6 @@ setInterval(updateTimecode, 40);
     document.getElementById('hint3d').classList.add('show');
   }, 600);
 
-  /* ── CARGA DE GLTF/GLB REAL ───────────────────── */
-  // Si MODEL_URL está definido, carga el modelo y reemplaza la demo.
-  // Necesitas incluir el GLTFLoader:
-  // <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-  //
-  // if (MODEL_URL && THREE.GLTFLoader) {
-  //   const loader = new THREE.GLTFLoader();
-  //   loader.load(MODEL_URL, (gltf) => {
-  //     root.remove(demo);
-  //     const model = gltf.scene;
-  //     // Centrar y escalar el modelo automáticamente
-  //     const box = new THREE.Box3().setFromObject(model);
-  //     const size = box.getSize(new THREE.Vector3());
-  //     const maxDim = Math.max(size.x, size.y, size.z);
-  //     model.scale.setScalar(2.5 / maxDim);
-  //     const center = box.getCenter(new THREE.Vector3());
-  //     model.position.sub(center.multiplyScalar(2.5 / maxDim));
-  //     root.add(model);
-  //   });
-  // }
-
   /* ── LOOP DE ANIMACIÓN ────────────────────────── */
   let t = 0;
   function animate() {
