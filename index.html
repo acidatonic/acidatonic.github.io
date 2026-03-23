@@ -277,6 +277,74 @@ section { position: relative; overflow: hidden; }
   position: relative;
 }
 
+/* Three.js canvas — fondo del hero */
+#hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  pointer-events: auto; /* permite OrbitControls */
+}
+#hero-canvas.loaded { opacity: 1; }
+
+/* Asegura que el contenido del hero esté por encima del canvas */
+.hero-grid,
+.hero-scanlines,
+.hero-number,
+.hero-inner {
+  position: relative;
+  z-index: 1;
+}
+
+/* Hint de interacción 3D */
+.hero-3d-hint {
+  position: absolute;
+  bottom: 90px;
+  right: 40px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--blue);
+  opacity: 0;
+  transition: opacity 0.8s ease 1.5s;
+  pointer-events: none;
+}
+.hero-3d-hint.show { opacity: 0.6; }
+.hero-3d-hint svg { width: 14px; height: 14px; animation: rotate-hint 3s linear infinite; }
+@keyframes rotate-hint {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* modelo file drop zone */
+#model-drop-hint {
+  position: absolute;
+  top: 90px;
+  right: 40px;
+  z-index: 2;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--blue);
+  opacity: 0.35;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+body.dark #model-drop-hint { opacity: 0.2; }
+
 .hero-inner {
   width: 100%;
   max-width: var(--max-w);
@@ -1374,9 +1442,25 @@ body.lang-es [data-lang-inline="es"] { display: inline; }
 
 <!-- HERO -->
 <section id="hero">
+  <!-- Three.js canvas -->
+  <canvas id="hero-canvas"></canvas>
+
   <div class="hero-grid"></div>
   <div class="hero-scanlines"></div>
   <div class="hero-number">3D</div>
+
+  <!-- Hint arrastra modelo -->
+  <div id="model-drop-hint">↑ arrastra tu .glb aquí</div>
+
+  <!-- Hint interacción -->
+  <div class="hero-3d-hint" id="hint3d">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+      <path d="M2 17l10 5 10-5"/>
+      <path d="M2 12l10 5 10-5"/>
+    </svg>
+    Arrastra para rotar
+  </div>
 
   <div class="hero-inner">
     <div class="hero-status" data-lang="en">Available for projects</div>
@@ -1901,6 +1985,357 @@ function updateTimecode() {
   hud.textContent = `REC ● ${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}:${pad(Math.floor(n.getMilliseconds()/10))}`;
 }
 setInterval(updateTimecode, 40);
+</script>
+
+<!-- ═══════════════════════════════════════════════════
+     THREE.JS HERO 3D
+     CDN: three.js r128 + GLTFLoader + OrbitControls
+     ═══════════════════════════════════════════════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function() {
+
+  /* ── CONFIGURACIÓN ────────────────────────────── */
+  // Cambia esta ruta cuando tengas tu modelo:
+  // const MODEL_URL = './tu-modelo.glb';
+  const MODEL_URL = null; // null = usa la geometría de demo
+
+  const ACCENT   = 0x0047FF;  // azul de la marca
+  const BG_LIGHT = 0xf0ede8;  // fondo claro
+  const BG_DARK  = 0x000000;  // fondo oscuro
+
+  /* ── SETUP BÁSICO ─────────────────────────────── */
+  const canvas  = document.getElementById('hero-canvas');
+  const section = document.getElementById('hero');
+
+  const renderer = new THREE.WebGLRenderer({
+    canvas,
+    antialias: true,
+    alpha: true,
+  });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.2;
+
+  const scene  = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  camera.position.set(0, 0.5, 4.5);
+
+  /* ── TAMAÑO RESPONSIVO ────────────────────────── */
+  function resize() {
+    const W = section.clientWidth;
+    const H = section.clientHeight;
+    renderer.setSize(W, H, false);
+    camera.aspect = W / H;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  /* ── ILUMINACIÓN ──────────────────────────────── */
+  // Ambiente suave
+  const ambLight = new THREE.AmbientLight(0xffffff, 0.4);
+  scene.add(ambLight);
+
+  // Luz principal (azul)
+  const keyLight = new THREE.DirectionalLight(ACCENT, 2.5);
+  keyLight.position.set(3, 4, 3);
+  keyLight.castShadow = true;
+  scene.add(keyLight);
+
+  // Luz de relleno (cálida)
+  const fillLight = new THREE.DirectionalLight(0xfff0e0, 1.0);
+  fillLight.position.set(-3, 1, -2);
+  scene.add(fillLight);
+
+  // Rim light (detrás, azul eléctrico)
+  const rimLight = new THREE.DirectionalLight(ACCENT, 3.0);
+  rimLight.position.set(0, -2, -4);
+  scene.add(rimLight);
+
+  // Point light animado (orbitando)
+  const orbitLight = new THREE.PointLight(ACCENT, 2, 8);
+  scene.add(orbitLight);
+
+  /* ── ACTUALIZAR FONDO SEGÚN TEMA ──────────────── */
+  function updateBg() {
+    const isDark = document.body.classList.contains('dark');
+    renderer.setClearColor(isDark ? BG_DARK : BG_LIGHT, 0); // alpha 0 = transparente
+  }
+  updateBg();
+  // Observa cambios de tema
+  new MutationObserver(updateBg).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+  /* ── ORBIT CONTROLS (manual, sin plugin) ─────── */
+  let isDragging = false;
+  let prevMouse = { x: 0, y: 0 };
+  let rotTarget = { x: 0, y: 0 };
+  let rotCurrent = { x: 0, y: 0 };
+  let autoRotate = true;
+
+  canvas.addEventListener('mousedown', e => {
+    isDragging = true;
+    autoRotate = false;
+    prevMouse = { x: e.clientX, y: e.clientY };
+    canvas.style.cursor = 'grabbing';
+  });
+  window.addEventListener('mouseup', () => {
+    isDragging = false;
+    canvas.style.cursor = 'grab';
+    // Retoma auto-rotación tras 3s de inactividad
+    clearTimeout(window._autoRotTimer);
+    window._autoRotTimer = setTimeout(() => { autoRotate = true; }, 3000);
+  });
+  window.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    const dx = e.clientX - prevMouse.x;
+    const dy = e.clientY - prevMouse.y;
+    rotTarget.y += dx * 0.008;
+    rotTarget.x += dy * 0.008;
+    rotTarget.x = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, rotTarget.x));
+    prevMouse = { x: e.clientX, y: e.clientY };
+  });
+
+  // Touch
+  canvas.addEventListener('touchstart', e => {
+    isDragging = true; autoRotate = false;
+    prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  }, { passive: true });
+  canvas.addEventListener('touchend', () => {
+    isDragging = false;
+    clearTimeout(window._autoRotTimer);
+    window._autoRotTimer = setTimeout(() => { autoRotate = true; }, 3000);
+  });
+  canvas.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    const dx = e.touches[0].clientX - prevMouse.x;
+    const dy = e.touches[0].clientY - prevMouse.y;
+    rotTarget.y += dx * 0.008;
+    rotTarget.x += dy * 0.008;
+    prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  }, { passive: true });
+
+  canvas.style.cursor = 'grab';
+
+  /* ── GRUPO RAÍZ DEL MODELO ────────────────────── */
+  const root = new THREE.Group();
+  scene.add(root);
+
+  /* ── GEOMETRÍA DE DEMO (hasta cargar tu .glb) ─── */
+  function buildDemoModel() {
+    const group = new THREE.Group();
+
+    // Material principal — metálico azul
+    const matMetal = new THREE.MeshStandardMaterial({
+      color: 0x0a0a0a,
+      metalness: 0.95,
+      roughness: 0.08,
+      envMapIntensity: 1.5,
+    });
+    const matBlue = new THREE.MeshStandardMaterial({
+      color: ACCENT,
+      metalness: 0.8,
+      roughness: 0.2,
+      emissive: ACCENT,
+      emissiveIntensity: 0.15,
+    });
+    const matWire = new THREE.MeshBasicMaterial({
+      color: ACCENT,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.06,
+    });
+
+    // Icosaedro central
+    const icoGeo = new THREE.IcosahedronGeometry(1, 1);
+    const icoMesh = new THREE.Mesh(icoGeo, matMetal);
+    icoMesh.castShadow = true;
+    group.add(icoMesh);
+
+    // Wireframe encima del icosaedro
+    const wireMesh = new THREE.Mesh(new THREE.IcosahedronGeometry(1.02, 1), matWire);
+    group.add(wireMesh);
+
+    // Anillo exterior 1
+    const ring1 = new THREE.Mesh(
+      new THREE.TorusGeometry(1.55, 0.018, 6, 80),
+      matBlue
+    );
+    ring1.rotation.x = Math.PI / 2;
+    group.add(ring1);
+
+    // Anillo exterior 2 (inclinado)
+    const ring2 = new THREE.Mesh(
+      new THREE.TorusGeometry(1.75, 0.012, 6, 80),
+      new THREE.MeshStandardMaterial({ color: ACCENT, metalness: 0.9, roughness: 0.1, transparent: true, opacity: 0.5 })
+    );
+    ring2.rotation.x = Math.PI / 3;
+    ring2.rotation.z = Math.PI / 6;
+    group.add(ring2);
+
+    // Esferas orbitales pequeñas
+    const orbMat = new THREE.MeshStandardMaterial({ color: ACCENT, metalness: 1, roughness: 0, emissive: ACCENT, emissiveIntensity: 0.4 });
+    for (let i = 0; i < 5; i++) {
+      const angle = (i / 5) * Math.PI * 2;
+      const orb = new THREE.Mesh(new THREE.SphereGeometry(0.055, 12, 12), orbMat);
+      orb.position.set(Math.cos(angle) * 1.55, 0, Math.sin(angle) * 1.55);
+      group.add(orb);
+    }
+
+    // Partículas de polvo
+    const ptCount = 200;
+    const ptGeo = new THREE.BufferGeometry();
+    const ptPos = new Float32Array(ptCount * 3);
+    for (let i = 0; i < ptCount; i++) {
+      const r = 1.8 + Math.random() * 1.4;
+      const theta = Math.random() * Math.PI * 2;
+      const phi   = Math.acos(2 * Math.random() - 1);
+      ptPos[i*3]   = r * Math.sin(phi) * Math.cos(theta);
+      ptPos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
+      ptPos[i*3+2] = r * Math.cos(phi);
+    }
+    ptGeo.setAttribute('position', new THREE.BufferAttribute(ptPos, 3));
+    const ptMat = new THREE.PointsMaterial({ color: ACCENT, size: 0.018, transparent: true, opacity: 0.55 });
+    group.add(new THREE.Points(ptGeo, ptMat));
+
+    return group;
+  }
+
+  // Añadir demo al root
+  const demo = buildDemoModel();
+  root.add(demo);
+
+  // Mostrar canvas
+  setTimeout(() => {
+    canvas.classList.add('loaded');
+    document.getElementById('hint3d').classList.add('show');
+  }, 600);
+
+  /* ── CARGA DE GLTF/GLB REAL ───────────────────── */
+  // Si MODEL_URL está definido, carga el modelo y reemplaza la demo.
+  // Necesitas incluir el GLTFLoader:
+  // <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  //
+  // if (MODEL_URL && THREE.GLTFLoader) {
+  //   const loader = new THREE.GLTFLoader();
+  //   loader.load(MODEL_URL, (gltf) => {
+  //     root.remove(demo);
+  //     const model = gltf.scene;
+  //     // Centrar y escalar el modelo automáticamente
+  //     const box = new THREE.Box3().setFromObject(model);
+  //     const size = box.getSize(new THREE.Vector3());
+  //     const maxDim = Math.max(size.x, size.y, size.z);
+  //     model.scale.setScalar(2.5 / maxDim);
+  //     const center = box.getCenter(new THREE.Vector3());
+  //     model.position.sub(center.multiplyScalar(2.5 / maxDim));
+  //     root.add(model);
+  //   });
+  // }
+
+  /* ── LOOP DE ANIMACIÓN ────────────────────────── */
+  let t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += 0.008;
+
+    // Auto-rotación suave
+    if (autoRotate) {
+      rotTarget.y += 0.004;
+    }
+
+    // Lerp suave hacia el target
+    rotCurrent.x += (rotTarget.x - rotCurrent.x) * 0.06;
+    rotCurrent.y += (rotTarget.y - rotCurrent.y) * 0.06;
+
+    root.rotation.x = rotCurrent.x;
+    root.rotation.y = rotCurrent.y;
+
+    // Respiración vertical
+    root.position.y = Math.sin(t * 0.6) * 0.06;
+
+    // Anillos contra-rotativos
+    if (demo) {
+      const r1 = demo.children[2]; // ring1
+      const r2 = demo.children[3]; // ring2
+      if (r1) r1.rotation.z += 0.003;
+      if (r2) r2.rotation.y += 0.005;
+    }
+
+    // Luz orbital animada
+    orbitLight.position.set(
+      Math.cos(t * 0.7) * 3,
+      Math.sin(t * 0.4) * 2,
+      Math.sin(t * 0.7) * 3
+    );
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  /* ── DRAG & DROP DE ARCHIVO .GLB ─────────────── */
+  // Permite arrastrar un .glb directamente sobre el hero
+  section.addEventListener('dragover', e => { e.preventDefault(); });
+  section.addEventListener('drop', e => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (!file || !file.name.match(/\.(glb|gltf)$/i)) return;
+
+    // Carga dinámica del GLTFLoader si no está disponible
+    function loadGLTFLoader(cb) {
+      if (window.THREE && window.THREE.GLTFLoader) return cb();
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js';
+      s.onload = cb;
+      document.head.appendChild(s);
+    }
+
+    loadGLTFLoader(() => {
+      const url = URL.createObjectURL(file);
+      const loader = new THREE.GLTFLoader();
+      loader.load(url, gltf => {
+        // Quitar demo
+        root.remove(demo);
+
+        const model = gltf.scene;
+
+        // Centrar y escalar automáticamente
+        const box = new THREE.Box3().setFromObject(model);
+        const size   = box.getSize(new THREE.Vector3());
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const scale  = 2.2 / maxDim;
+        model.scale.setScalar(scale);
+
+        const center = box.getCenter(new THREE.Vector3());
+        model.position.set(
+          -center.x * scale,
+          -center.y * scale,
+          -center.z * scale
+        );
+
+        // Aplicar materiales mejorados a meshes del modelo
+        model.traverse(child => {
+          if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            if (child.material) {
+              child.material.envMapIntensity = 1.2;
+            }
+          }
+        });
+
+        root.add(model);
+        URL.revokeObjectURL(url);
+
+        // Ocultar hint
+        document.getElementById('model-drop-hint').style.display = 'none';
+      });
+    });
+  });
+
+})();
 </script>
 
 </body>
