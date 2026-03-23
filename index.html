@@ -1766,8 +1766,8 @@ body.lang-es [data-lang-inline="es"] { display: inline; }
         <p class="contact-text" data-lang="es">Disponible para encargos, colaboraciones y proyectos freelance.
         Trabajo en publicidad, música, moda y dirección de arte personal.</p>
 
-        <a href="mailto:hello@lionlionlion.com" class="contact-email-link">
-          hello@lionlionlion.com →
+        <a href="/cdn-cgi/l/email-protection#2149444d4d4e614d484e4f4d484e4f4d484e4f0f424e4c" class="contact-email-link">
+          <span class="__cf_email__" data-cfemail="c4aca1a8a8ab84a8adabaaa8adabaaa8adabaaeaa7aba9">[email&#160;protected]</span> →
         </a>
 
         <div class="social-links">
@@ -1842,7 +1842,7 @@ body.lang-es [data-lang-inline="es"] { display: inline; }
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* === LOADER === */
 (function() {
   const bar    = document.getElementById('loader-bar');
@@ -1998,7 +1998,7 @@ setInterval(updateTimecode, 40);
   /* ── CONFIGURACIÓN ────────────────────────────── */
   // Cambia esta ruta cuando tengas tu modelo:
   // const MODEL_URL = './tu-modelo.glb';
-  const MODEL_URL = './serpent_head.glb'; // null = usa la geometría de demo
+  const MODEL_URL = null; // null = usa la geometría de demo
 
   const ACCENT   = 0x0047FF;  // azul de la marca
   const BG_LIGHT = 0xf0ede8;  // fondo claro
@@ -2204,15 +2204,66 @@ setInterval(updateTimecode, 40);
     return group;
   }
 
-  // Añadir demo al root
-  const demo = buildDemoModel();
-  root.add(demo);
-
-  // Mostrar canvas
-  setTimeout(() => {
+  // ── Mostrar canvas y hint ──
+  function revealCanvas() {
     canvas.classList.add('loaded');
     document.getElementById('hint3d').classList.add('show');
-  }, 600);
+  }
+
+  // ── Carga GLB/GLTF desde una URL ──
+  function loadModel(url, onLoaded) {
+    function withLoader(cb) {
+      if (window.THREE && window.THREE.GLTFLoader) return cb();
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js';
+      s.onload = cb;
+      document.head.appendChild(s);
+    }
+    withLoader(() => {
+      const loader = new THREE.GLTFLoader();
+      loader.load(
+        url,
+        (gltf) => {
+          const model = gltf.scene;
+          const box    = new THREE.Box3().setFromObject(model);
+          const size   = box.getSize(new THREE.Vector3());
+          const maxDim = Math.max(size.x, size.y, size.z);
+          const scale  = 2.2 / maxDim;
+          model.scale.setScalar(scale);
+          const center = box.getCenter(new THREE.Vector3());
+          model.position.set(-center.x * scale, -center.y * scale, -center.z * scale);
+          model.traverse(child => {
+            if (child.isMesh) {
+              child.castShadow = true;
+              child.receiveShadow = true;
+              if (child.material) child.material.envMapIntensity = 1.2;
+            }
+          });
+          if (onLoaded) onLoaded(model);
+        },
+        undefined,
+        (err) => console.warn('Error cargando GLB:', err)
+      );
+    });
+  }
+
+  // ── Decide: modelo real o demo ──
+  let demoMesh = null;
+
+  if (MODEL_URL) {
+    loadModel(MODEL_URL, (model) => {
+      root.add(model);
+      setTimeout(revealCanvas, 300);
+      document.getElementById('model-drop-hint').style.display = 'none';
+    });
+  } else {
+    demoMesh = buildDemoModel();
+    root.add(demoMesh);
+    setTimeout(revealCanvas, 600);
+  }
+
+  // Alias para el loop de animación (anillos de la demo)
+  const demo = { get children() { return demoMesh ? demoMesh.children : []; } };
 
   /* ── LOOP DE ANIMACIÓN ────────────────────────── */
   let t = 0;
@@ -2301,21 +2352,3 @@ setInterval(updateTimecode, 40);
             child.receiveShadow = true;
             if (child.material) {
               child.material.envMapIntensity = 1.2;
-            }
-          }
-        });
-
-        root.add(model);
-        URL.revokeObjectURL(url);
-
-        // Ocultar hint
-        document.getElementById('model-drop-hint').style.display = 'none';
-      });
-    });
-  });
-
-})();
-</script>
-
-</body>
-</html>
